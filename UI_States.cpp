@@ -10,13 +10,20 @@
 UI_Welcome::UI_Welcome() { }
 
 void UI_Welcome::activate() {
+    this->start = millis();
     LCD_Wrapper::action();
     LCD_Wrapper::display("   PlantBot     ", "     active     ");
+
 }
 void UI_Welcome::handle_button_press() { }
 void UI_Welcome::handle_rotation(int delta) { }
 
-void UI_Welcome::update() { }
+void UI_Welcome::update() { 
+    unsigned long now = millis();
+    if(now - start > 1000 * this->duration) {
+        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+    }
+}
 
 /*********** UI_Interval *************/
 UI_Interval::UI_Interval() {

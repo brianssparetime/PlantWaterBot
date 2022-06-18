@@ -60,7 +60,7 @@ REWrapper rew = REWrapper(encoder);
 
     // default states
     RoughHoursTimer::start();
-    Machine::changeState(new UI_Interval());
+    Machine::changeState(new UI_Welcome());
     LCD_Wrapper::action();
 
   }
@@ -81,6 +81,9 @@ REWrapper rew = REWrapper(encoder);
 
     // update lcd backlight auto-off
     LCD_Wrapper::update();
+
+    //update Machine for any state auto-transitions
+    Machine::update();
 
   } // end loop
 

@@ -21,6 +21,10 @@ class UI_Welcome : public UI_State {
         virtual void handle_button_press();
         virtual void handle_rotation(int delta);
         virtual ~UI_Welcome();
+    private:
+        const int duration = 3; // seconds
+        unsigned long start;
+        
 
 };
 
