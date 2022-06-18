@@ -34,8 +34,8 @@ UI_Interval::UI_Interval() {
 }
 
 void UI_Interval::activate() {
-    int ci = RoughHoursTimer::get_current_interval();
-    int hours_left = RoughHoursTimer::get_h_remaining();
+    int ci = RHTimer::get_current_interval();
+    int hours_left = RHTimer::get_h_remaining();
     char sb[50];
     sprintf(sb, "  %02dH (%02dH left)", ci, hours_left);
     LCD_Wrapper::display("< INTERVAL >", sb);
@@ -96,13 +96,13 @@ int UI_Interval_Set::next_interval_right() {
 }
 
 void UI_Interval_Set::activate() {
-    int ci = RoughHoursTimer::get_current_interval();
+    int ci = RHTimer::get_current_interval();
     adjust_lcd_state(ci);
     new_interval_selected = ci;
 }
 
 void UI_Interval_Set::handle_button_press() {
-    RoughHoursTimer::start(new_interval_selected);
+    RHTimer::start(new_interval_selected);
     Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 

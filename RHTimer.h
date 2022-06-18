@@ -3,7 +3,7 @@
 
 // purely static
 
-class RoughHoursTimer {
+class RHTimer {
     public:
         static void start();
         static void start(int interval);

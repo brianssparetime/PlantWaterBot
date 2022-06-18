@@ -59,7 +59,7 @@ REWrapper rew = REWrapper(encoder);
    
 
     // default states
-    RoughHoursTimer::start();
+    RHTimer::start();
     Machine::changeState(new UI_Welcome());
     LCD_Wrapper::backlight();
 
@@ -74,7 +74,7 @@ REWrapper rew = REWrapper(encoder);
   void loop() {
 
     // update timer
-    RoughHoursTimer::update();
+    RHTimer::update();
 
     // update rotary encoder
     rew.update();
