@@ -35,9 +35,9 @@ void Relay::activate() {
     turn_on();
     Relay::start_time = millis();
     Machine::changeState(static_cast<UI_State *>(new UI_Watering()));
+    // Note:  Do this after state transition to avoid the backlight call in changeState overriding this...
     long unsigned ms = amount_to_duration(Relay::amount);
     LCD_Wrapper::backlight(ms);
-    // Note:  Do this after state transition to avoid the backlight call in changeState overriding this...
 }
 
 void Relay::update() {
@@ -46,8 +46,6 @@ void Relay::update() {
         turn_off();
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
     }
-    // TODO: activate a UI state transition ??
-
 }
 
 long unsigned Relay::start_time = 0; 
