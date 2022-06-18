@@ -1,6 +1,8 @@
 #pragma once
 #include "UI_States.h"
 
+// singleton
+
 class UI_State;
 
 class Machine {
