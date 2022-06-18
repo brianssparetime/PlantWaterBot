@@ -1,2 +1,7 @@
 # PlantWaterBot
-Arduino Nano project for activating a peristaltic pump (via relay) on a timer (without RTC) implementing FSMs for UI (LCD + rotary encoder)
+Arduino Nano project to water a plant, involving:
+
+ -  activating a peristaltic pump (via relay) 
+ -  on a timer (without RTC) 
+ -  UI (LCD + rotary encoder)
+ -  controlled via a finite state machine (FSM) implemented with a c++ singleton
