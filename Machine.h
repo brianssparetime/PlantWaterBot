@@ -7,6 +7,8 @@ class UI_State;
 
 class Machine {
 
+    // singleton
+
     friend class UI_State;
 
     public:

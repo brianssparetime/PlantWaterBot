@@ -1,6 +1,7 @@
 #pragma once
 #include "RHTimer.h"
 #include "Arduino.h"
+#include "Relay.h"
 
 
 int RoughHoursTimer::minutes_elapsed = 0;
@@ -53,4 +54,6 @@ void RoughHoursTimer::alarm() {
     #ifdef DEBUG
         Serial.println("==========ALARM=================="); 
     #endif DEBUG
+    Relay::activate();
+
 }

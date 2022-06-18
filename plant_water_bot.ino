@@ -85,6 +85,9 @@ REWrapper rew = REWrapper(encoder);
     //update Machine for any state auto-transitions
     Machine::update();
 
+    //update relay for turning off
+    Relay::update();
+
   } // end loop
 
 
