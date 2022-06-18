@@ -1,6 +1,7 @@
 #pragma once
 #include "Machine.h"
 #include "UI_States.h"
+#include "LCD_Wrapper.h"
 
 
 
@@ -8,6 +9,7 @@ void Machine::changeState(UI_State* new_state) {
     UI_State *old_state = instance->current_state;
     instance->current_state = new_state;
     delete old_state;
+    LCD_Wrapper::backlight();
     instance->current_state->activate();
 }
 

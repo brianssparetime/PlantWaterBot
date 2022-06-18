@@ -1,6 +1,7 @@
 #pragma once
 #include "Relay.h"
 #include "Arduino.h"
+#include "LCD_Wrapper.h"
 
 void Relay::turn_on() {
     digitalWrite(Relay::pin, LOW);
@@ -21,13 +22,19 @@ int Relay::amount = 100; // TODO:  make sure this gets set elsewhere after testi
 void Relay::set_amount(int amount) {
     Relay::amount = amount;
 }
+unsigned long Relay::get_duration() {
+    return amount_to_duration(Relay::amount);
 
+}
 
 
 void Relay::activate() {
     turn_on();
     Relay::start_time = millis();
     // TODO: activate a UI state transition ??
+    long unsigned ms = amount_to_duration(Relay::amount);
+    LCD_Wrapper::backlight(ms);
+    // Note:  Do this after state transition to avoid the backlight call in changeState overriding this...
 }
 
 void Relay::update() {

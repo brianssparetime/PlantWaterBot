@@ -8,6 +8,7 @@ class Relay {
         static void activate();
         static void update();
         static void set_amount(int amount);
+        static unsigned long get_duration();
 
     private:
         static void turn_on();

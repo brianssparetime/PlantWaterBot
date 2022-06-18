@@ -38,9 +38,7 @@ class UI_Interval : public UI_State {
         virtual void handle_rotation(int delta);
         virtual ~UI_Interval();
 
-    private:
 
-        void adjust_lcd_state();
 };
 
 
@@ -64,6 +62,21 @@ class UI_Interval_Set : public UI_State {
         void adjust_lcd_state(int intv);
     
 };
+
+class UI_Watering : public UI_State {
+    public:
+        UI_Watering();
+        virtual void activate();
+        virtual void update();
+        virtual void handle_button_press();
+        virtual void handle_rotation(int delta);
+        virtual ~UI_Watering();
+    private:
+        unsigned long start;
+        
+
+};
+
 
 
 // TODO:  define and implement amount states

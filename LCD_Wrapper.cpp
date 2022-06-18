@@ -4,6 +4,7 @@
 #include "Arduino.h"
 
 long unsigned LCD_Wrapper::last_action = 0;
+long unsigned LCD_Wrapper::specified_ontime = 0;
 bool LCD_Wrapper::quiet = false;
 LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
 LiquidCrystal_I2C* LCD_Wrapper::lcd = lcd;
@@ -20,8 +21,16 @@ void LCD_Wrapper::init() {
     lcd->print("  PLANT BOT");
 }
 
-void LCD_Wrapper::action() {
+void LCD_Wrapper::backlight() {
     last_action = millis();
+    lcd->backlight();
+    quiet = false;
+    specified_ontime = 0;
+}
+
+void LCD_Wrapper::backlight(long unsigned ms) {
+    last_action = millis();
+    specified_ontime = ms;
     lcd->backlight();
     quiet = false;
 }
@@ -35,10 +44,17 @@ void LCD_Wrapper::display(String line1, String line2) {
 
 
 void LCD_Wrapper::update() {
+    long unsigned now = millis();
     if (quiet) {
         return;
     }
-    long unsigned now = millis();
+    if(specified_ontime > 0) {
+        if(now - last_action > specified_ontime) {
+            specified_ontime = 0;
+            lcd->noBacklight();
+            quiet = true;
+        }
+    }
     if (now > last_action + keep_on_time) {
         lcd->noBacklight();
         quiet = true;

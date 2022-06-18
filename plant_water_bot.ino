@@ -61,7 +61,7 @@ REWrapper rew = REWrapper(encoder);
     // default states
     RoughHoursTimer::start();
     Machine::changeState(new UI_Welcome());
-    LCD_Wrapper::action();
+    LCD_Wrapper::backlight();
 
   }
 

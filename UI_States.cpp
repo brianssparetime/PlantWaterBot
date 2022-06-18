@@ -4,6 +4,11 @@
 #include "Arduino.h"
 #include "LCD_Wrapper.h"
 #include "RHTimer.h"
+#include "Relay.h"
+
+
+// TODO:  test whether I can just remove the empty methods here
+
 
 /*********** UI_Welcome *************/
 
@@ -11,7 +16,6 @@ UI_Welcome::UI_Welcome() { }
 
 void UI_Welcome::activate() {
     this->start = millis();
-    LCD_Wrapper::action();
     LCD_Wrapper::display("   PlantBot     ", "     active     ");
 
 }
@@ -30,7 +34,11 @@ UI_Interval::UI_Interval() {
 }
 
 void UI_Interval::activate() {
-    adjust_lcd_state();
+    int ci = RoughHoursTimer::get_current_interval();
+    int hours_left = RoughHoursTimer::get_h_remaining();
+    char sb[50];
+    sprintf(sb, "  %02dH (%02dH left)", ci, hours_left);
+    LCD_Wrapper::display("< INTERVAL >", sb);
 }
 void UI_Interval::handle_button_press() {
     Machine::changeState(static_cast<UI_State *>(new UI_Interval_Set()));
@@ -38,19 +46,6 @@ void UI_Interval::handle_button_press() {
 
 void UI_Interval::handle_rotation(int delta) {
     // TODO: implement this after testing
-}
-
-void UI_Interval::adjust_lcd_state() {
-    LCD_Wrapper::action();
-
-    int ci = RoughHoursTimer::get_current_interval();
-    int hours_left = RoughHoursTimer::get_h_remaining();
-    char sb[50];
-    sprintf(sb, "  %02dH (%02dH left)", ci, hours_left);
-    LCD_Wrapper::display("< INTERVAL >", sb);
-    // lcd.setCursor(0,0); // col, row)
-    // lcd.print("< INTERVAL >");
-    // lcd.print(sb);
 }
 
 void UI_Interval::update() { }
@@ -66,7 +61,6 @@ const int intervals_size = 5; //DAsizeof(intervals) / sizeof(intervals[0]);
 
 
 void UI_Interval_Set::adjust_lcd_state(int intv) {
-    LCD_Wrapper::action();
     char sb[50];
     sprintf(sb, "< %02dH >", intv);
     LCD_Wrapper::display("  INTERVAL Set:", sb);
@@ -125,8 +119,38 @@ void UI_Interval_Set::handle_rotation(int delta) {
 void UI_Interval_Set::update() { }
 
 
+/*********** UI_Watering *************/
+
+
+UI_Watering::UI_Watering() { }
+
+void UI_Watering::activate() {
+    this->start = millis();
+    LCD_Wrapper::display("    Slaking     ", "     thirst!    ");
+
+}
+void UI_Watering::handle_button_press() { 
+        Machine::changeState(static_cast<UI_State *>(new UI_Interval_Set()));
+}
+void UI_Watering::handle_rotation(int delta) { 
+        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+}
+
+void UI_Watering::update() { 
+    unsigned long now = millis();
+    if(now - start > 1000 * Relay::get_duration()) {
+        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+    }
+}
+
+
+
+
+/*********** destructors *************/
+
 
 UI_State::~UI_State() {}
 UI_Welcome::~UI_Welcome() {}
 UI_Interval::~UI_Interval() {}
 UI_Interval_Set::~UI_Interval_Set() {}
+UI_Watering::~UI_Watering() {}
