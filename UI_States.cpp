@@ -7,7 +7,7 @@
 #include "Relay.h"
 
 
-// TODO:  test whether I can just remove the empty methods here
+// Note:  cannot remove empty methods here... bummer.
 
 
 /*********** UI_Welcome *************/
