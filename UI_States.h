@@ -13,6 +13,13 @@ class UI_State {
 };
 
 
+
+class UI_State_Setter {
+    public:
+        static int next_left(int current, int arr[], int arr_size);
+        static int next_right(int current, int arr[], int arr_size);
+};
+
 class UI_Welcome : public UI_State {
     public:
         UI_Welcome();
@@ -42,7 +49,7 @@ class UI_Interval : public UI_State {
 };
 
 
-class UI_Interval_Set : public UI_State {
+class UI_Interval_Set : public UI_State, public UI_State_Setter {
     public:
 
         UI_Interval_Set();
@@ -55,10 +62,6 @@ class UI_Interval_Set : public UI_State {
     private:
 
         int new_interval_selected;
-        const int intervals[5];
-        const int intervals_size = 5;
-        int next_interval_left();
-        int next_interval_right();
         void adjust_lcd_state(int intv);
     
 };
@@ -78,5 +81,36 @@ class UI_Watering : public UI_State {
 };
 
 
+class UI_Amount : public UI_State {
+    public:
 
-// TODO:  define and implement amount states
+        UI_Amount();
+        virtual void activate();
+        virtual void update();
+        virtual void handle_button_press();
+        virtual void handle_rotation(int delta);
+        virtual ~UI_Amount();
+
+
+};
+
+
+class UI_Amount_Set : public UI_State, public UI_State_Setter {
+    public:
+
+        UI_Amount_Set();
+        virtual void activate();
+        virtual void update();
+        virtual void handle_button_press();
+        virtual void handle_rotation(int delta);
+        virtual ~UI_Amount_Set();
+
+    private:
+
+        int new_amount_selected;
+        void adjust_lcd_state(int intv);
+    
+};
+
+// TODO:  define and implement low/empty sensor states
+// TODO:  consider abstractifying the idea of a timer state, and a set/get state

@@ -21,10 +21,18 @@ long unsigned Relay::amount_to_duration(int amount) {
 }
 
 
-int Relay::amount = 100; // TODO:  make sure this gets set elsewhere after testing
+int Relay::amount = 100; // ASSERT amount should be in array amounts
+const int Relay::amounts[5] = {10, 25, 50, 100, 200}; // hours
+// assert size of this list set in .h file
+
 void Relay::set_amount(int amount) {
     Relay::amount = amount;
 }
+
+int Relay::get_amount() {
+    return Relay::amount;
+}
+
 unsigned long Relay::get_duration() {
     return amount_to_duration(Relay::amount);
 

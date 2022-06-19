@@ -7,7 +7,12 @@
 int RHTimer::minutes_elapsed = 0;
 int RHTimer::hours_elapsed = 0;
 long unsigned RHTimer::next_min_millis = 0;
-int RHTimer::cur_interval = 6;
+
+// ASSERT cur_interval should be first item in array intervals
+int RHTimer::cur_interval = 8;
+const int RHTimer::intervals[5] = {8, 12, 24, 48, 72}; // hours
+// assert size of this list set in .h file
+
 
 void RHTimer::start() {
     unsigned long now = millis();

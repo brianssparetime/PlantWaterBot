@@ -12,6 +12,9 @@ class RHTimer {
         static void update();
         static int get_current_interval();
 
+        static const int intervals[5];
+        static const int intervals_size = 5;
+
     private:
 
         static void alarm();

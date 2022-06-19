@@ -10,6 +10,39 @@
 // Note:  cannot remove empty methods here... bummer.
 
 
+/*********** UI_State_Setter *************/
+
+
+static int UI_State_Setter::next_left(int current, int arr[], int arr_size) {
+    
+    // on match, return holder, which is either previous 
+    // or if i=0, then return holder (which is already set to the last)
+    int p = arr[arr_size - 1];
+    for (int i = 0; i < arr_size; i++) {
+        int x = arr[i];
+        if(x == current) {
+            return p;
+        }
+        p = x;
+    }
+}
+
+static int UI_State_Setter::next_right(int current, int arr[], int arr_size) {
+    // if we're currently at the last position, return first one
+    if (arr[arr_size - 1] == current) {
+        return arr[0];
+    }
+    // otherwise, start from begining, go until second to last, and return next after match
+    for (int i = 0; i < arr_size - 1; i++) {
+        int x = arr[i];
+        if(x == current) {
+            return arr[i+1];
+        }
+    }
+}
+
+
+
 /*********** UI_Welcome *************/
 
 UI_Welcome::UI_Welcome() { }
@@ -19,8 +52,12 @@ void UI_Welcome::activate() {
     LCD_Wrapper::display("   PlantBot     ", "     active     ");
 
 }
-void UI_Welcome::handle_button_press() { }
-void UI_Welcome::handle_rotation(int delta) { }
+void UI_Welcome::handle_button_press() {
+    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+ }
+void UI_Welcome::handle_rotation(int delta) { 
+    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+}
 
 void UI_Welcome::update() { 
     unsigned long now = millis();
@@ -45,7 +82,7 @@ void UI_Interval::handle_button_press() {
 }
 
 void UI_Interval::handle_rotation(int delta) {
-    // TODO: implement this after testing
+        Machine::changeState(static_cast<UI_State *>(new UI_Amount()));
 }
 
 void UI_Interval::update() { }
@@ -53,46 +90,17 @@ void UI_Interval::update() { }
 /*********** UI_Interval_Set *************/
 
 UI_Interval_Set::UI_Interval_Set() {
+    new_interval_selected = RHTimer::get_current_interval();
 }
 
 static int new_interval_selected;
-const int intervals[5] = {8, 12, 24, 48, 72}; // hours
-const int intervals_size = 5; //DAsizeof(intervals) / sizeof(intervals[0]);
+
 
 
 void UI_Interval_Set::adjust_lcd_state(int intv) {
     char sb[50];
     sprintf(sb, "< %02dH >", intv);
     LCD_Wrapper::display("  INTERVAL Set:", sb);
-    // lcd.setCursor(0,0); // col, row)
-    // lcd.print("  INTERVAL SET:");
-    // char sb[50];
-    // sprintf(sb, "< %02dH >", intv);
-    // lcd.print(sb);
-}
-
-static int UI_Interval_Set::next_interval_left() {
-    // set to last
-    int p = intervals[intervals_size - 1];
-    for (int i = 0; i < intervals_size; i++) {
-        int x = intervals[i];
-        if(x == new_interval_selected) {
-            return p;
-        }
-        p = x;
-    }
-}
-
-int UI_Interval_Set::next_interval_right() {
-    if (intervals[intervals_size-1] == new_interval_selected) {
-        return intervals[0];
-    }
-    for (int i = 0; i < intervals_size - 1; i++) {
-        int x = intervals[i];
-        if(x == new_interval_selected) {
-            return intervals[i+1];
-        }
-    }
 }
 
 void UI_Interval_Set::activate() {
@@ -108,10 +116,12 @@ void UI_Interval_Set::handle_button_press() {
 
 void UI_Interval_Set::handle_rotation(int delta) {
     if(delta > 0) {
-        new_interval_selected = next_interval_right();
+        new_interval_selected = UI_State_Setter::next_right( \
+            new_interval_selected, RHTimer::intervals, RHTimer::intervals_size);
         adjust_lcd_state(new_interval_selected);
     } else if (delta < 0) {
-        new_interval_selected = next_interval_left();
+        new_interval_selected = UI_State_Setter::next_left( \
+            new_interval_selected, RHTimer::intervals, RHTimer::intervals_size);
         adjust_lcd_state(new_interval_selected);
     }
 }
@@ -126,7 +136,7 @@ UI_Watering::UI_Watering() { }
 
 void UI_Watering::activate() {
     this->start = millis();
-    LCD_Wrapper::display("    Slaking     ", "     thirst!    ");
+    LCD_Wrapper::display("    Slaking     ", "     Thirst!    ");
 
 }
 void UI_Watering::handle_button_press() { 
@@ -144,6 +154,66 @@ void UI_Watering::update() {
 }
 
 
+/*********** UI_Amount *************/
+
+
+UI_Amount::UI_Amount() { }
+
+void UI_Amount::activate() {
+    char sb[50];
+    sprintf(sb, "  %d ml  ", Relay::get_amount());
+    LCD_Wrapper::display("< AMOUNT >", sb);
+
+}
+void UI_Amount::handle_button_press() { 
+    Machine::changeState(static_cast<UI_State *>(new UI_Amount_Set()));
+}
+void UI_Amount::handle_rotation(int delta) {
+    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+}
+
+void UI_Amount::update() { 
+}
+
+
+
+
+
+
+/*********** UI_Amount_Set *************/
+
+static int new_amount_selected;
+
+UI_Amount_Set::UI_Amount_Set() {
+    new_amount_selected = Relay::get_amount();
+}
+
+void UI_Amount_Set::activate() {
+    adjust_lcd_state(new_amount_selected);
+}
+void UI_Amount_Set::handle_button_press() { 
+    Relay::set_amount(new_amount_selected);
+    Machine::changeState(static_cast<UI_State *>(new UI_Amount()));
+}
+void UI_Amount_Set::handle_rotation(int delta) { 
+    if(delta > 0) {
+        new_amount_selected = UI_State_Setter::next_right(new_amount_selected, Relay::amounts, Relay::amounts_size);
+        adjust_lcd_state(new_amount_selected);
+    } else if (delta < 0) {
+        new_amount_selected = UI_State_Setter::next_left(new_amount_selected, Relay::amounts, Relay::amounts_size);
+        adjust_lcd_state(new_amount_selected);
+    }
+}
+void UI_Amount_Set::update() { 
+}
+
+// TODO:  perhaps implement this stuff in another inherited class
+void UI_Amount_Set::adjust_lcd_state(int intv) {
+    char sb[50];
+    sprintf(sb, "< %d ml >", intv);
+    LCD_Wrapper::display("  AMOUNT Set:", sb);
+}
+
 
 
 /*********** destructors *************/
@@ -154,3 +224,5 @@ UI_Welcome::~UI_Welcome() {}
 UI_Interval::~UI_Interval() {}
 UI_Interval_Set::~UI_Interval_Set() {}
 UI_Watering::~UI_Watering() {}
+UI_Amount::~UI_Amount() {}
+UI_Amount_Set::~UI_Amount_Set() {}
