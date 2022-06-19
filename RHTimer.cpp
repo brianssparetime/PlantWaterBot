@@ -55,7 +55,6 @@ int RHTimer::get_current_interval() {
 
 
 void RHTimer::alarm() {
-    // TODO:  activate relay, or call relay object?
     #ifdef DEBUG
         Serial.println("==========ALARM=================="); 
     #endif DEBUG
