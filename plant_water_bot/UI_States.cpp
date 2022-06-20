@@ -48,10 +48,10 @@ static int UI_State_Setter::next_right(int current, int arr[], int arr_size) {
 UI_Welcome::UI_Welcome() { }
 
 void UI_Welcome::activate() {
-    this->start = millis();
+    start = millis();
     LCD_Wrapper::display("   PlantBot     ", "     active     ");
-
 }
+
 void UI_Welcome::handle_button_press() {
     Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
  }
@@ -61,7 +61,7 @@ void UI_Welcome::handle_rotation(int delta) {
 
 void UI_Welcome::update() { 
     unsigned long now = millis();
-    if(now - start > 1000 * this->duration) {
+    if(now - start > 1000 * duration) {
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
     }
 }

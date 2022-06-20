@@ -12,7 +12,7 @@ class Machine {
     friend class UI_State;
 
     public:
-        static Machine *getInstance();
+        static Machine* getInstance();
         static void changeState(UI_State* new_state);
         static void activate();
         static void update();
@@ -21,7 +21,7 @@ class Machine {
 
 
     private:
-        Machine() = default;
+        Machine(); //= default;
         UI_State* current_state;
         static Machine* instance;
 

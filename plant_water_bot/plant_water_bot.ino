@@ -55,10 +55,10 @@ REWrapper rew = REWrapper( &encoder);
     EncoderInterrupt.begin( &encoder );
 
     // default states
-    RHTimer::start();
-    Machine::changeState(new UI_Welcome());
-    LCD_Wrapper::init();
+    LCD_Wrapper::init(); // this must come up top!
     LCD_Wrapper::backlight();
+    Machine::changeState(new UI_Welcome());
+    RHTimer::start();
 
   }
 
