@@ -10,6 +10,8 @@
 #include "REWrapper.h"
 #include "Relay.h"
 
+
+//comment out later for smoother running
 #define DEBUG
 
 
@@ -61,6 +63,7 @@ REWrapper rew = REWrapper(encoder);
     // default states
     RHTimer::start();
     Machine::changeState(new UI_Welcome());
+    LCD_Wrapper::init();
     LCD_Wrapper::backlight();
 
   }
