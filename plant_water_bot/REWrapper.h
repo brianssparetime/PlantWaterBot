@@ -19,7 +19,7 @@ class REWrapper {
         bool prev_RE_button;
         int rot_buffer;
         unsigned long last_rot;
-        const unsigned long rot_delay = 100UL; // ms
+        const unsigned long rot_delay = 300UL; // ms
         Encoder* encoder;
 
 };
