@@ -86,14 +86,11 @@ REWrapper rew = REWrapper( &encoder);
     LCD_Wrapper::update();
 
     //update Machine for any state auto-transitions
-    Machine::update(); //<-- causing segfault
+    Machine::update(); 
     
 
     // //update relay for turning off
     Relay::update();
-    #ifdef DEBUG 
-      Serial.println("relay update");
-    #endif 
 
   } // end loop
 

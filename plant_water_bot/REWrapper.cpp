@@ -69,10 +69,12 @@ void REWrapper::update() {
 }
 
 void REWrapper::button_action() {
+    LCD_Wrapper::backlight();
     Machine::handle_button_press();
 }
 
 void REWrapper::rotate_action(int delta) {
+    LCD_Wrapper::backlight();
     Machine::handle_rotation(delta);
 }
 

@@ -29,12 +29,10 @@ Machine* Machine::getInstance() {
   return instance;
 }
 
-void Machine::activate() { static Machine* instance; instance->current_state->activate();}
-void Machine::update() { 
-  instance->current_state->update(); // < causing faults
-  }
-void Machine::handle_button_press() { static Machine* instance; instance->current_state->handle_button_press();}
-void Machine::handle_rotation(int delta) { static Machine* instance; instance->current_state->handle_rotation(delta);}
+void Machine::activate() { instance->current_state->activate();}
+void Machine::update() { instance->current_state->update(); }
+void Machine::handle_button_press() { instance->current_state->handle_button_press();}
+void Machine::handle_rotation(int delta) { instance->current_state->handle_rotation(delta);}
 
 Machine* Machine::instance = NULL;
 
