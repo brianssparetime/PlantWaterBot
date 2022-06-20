@@ -57,9 +57,12 @@ REWrapper rew = REWrapper( &encoder);
     // default states
     LCD_Wrapper::init(); // this must come up top!
     LCD_Wrapper::backlight();
+    Machine::init();
     Machine::changeState(new UI_Welcome());
     RHTimer::start();
-
+    #ifdef DEBUG 
+      Serial.println("finished setup");
+    #endif 
   }
 
 
@@ -73,17 +76,24 @@ REWrapper rew = REWrapper( &encoder);
     // update timer
     RHTimer::update();
 
-    // update rotary encoder
+    // // update rotary encoder
     rew.update();
+    // #ifdef DEBUG 
+    //   Serial.println("rew update");
+    // #endif 
 
     // update lcd backlight auto-off
     LCD_Wrapper::update();
 
     //update Machine for any state auto-transitions
-    Machine::update();
+    Machine::update(); //<-- causing segfault
+    
 
-    //update relay for turning off
+    // //update relay for turning off
     Relay::update();
+    #ifdef DEBUG 
+      Serial.println("relay update");
+    #endif 
 
   } // end loop
 

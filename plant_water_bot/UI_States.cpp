@@ -6,6 +6,7 @@
 #include "RHTimer.h"
 #include "Relay.h"
 
+#define DEBUG
 
 // Note:  cannot remove empty methods here... bummer.
 
@@ -45,11 +46,13 @@ static int UI_State_Setter::next_right(int current, int arr[], int arr_size) {
 
 /*********** UI_Welcome *************/
 
-UI_Welcome::UI_Welcome() { }
+UI_Welcome::UI_Welcome() { 
+    start = 0;
+}
 
 void UI_Welcome::activate() {
     start = millis();
-    LCD_Wrapper::display("   PlantBot     ", "     active     ");
+    LCD_Wrapper::display("   PlantBot     ", "    active      ");
 }
 
 void UI_Welcome::handle_button_press() {
@@ -62,6 +65,10 @@ void UI_Welcome::handle_rotation(int delta) {
 void UI_Welcome::update() { 
     unsigned long now = millis();
     if(now - start > 1000 * duration) {
+        #ifdef DEBUG 
+            Serial.println("about to change to interval");
+        #endif 
+        LCD_Wrapper::backlight();
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
     }
 }
