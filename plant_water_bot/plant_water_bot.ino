@@ -46,7 +46,7 @@ REWrapper rew = REWrapper(encoder);
 
     
     #ifdef DEBUG 
-      Serial.begin(115200);
+      Serial.begin(19200);
       Serial.println("PlantBot online");
     #endif
 
