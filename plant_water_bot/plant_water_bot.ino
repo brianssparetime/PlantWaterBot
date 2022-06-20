@@ -89,7 +89,7 @@ REWrapper rew = REWrapper( &encoder);
     
 
     // //update relay for turning off
-    //Relay::update();
+    Relay::update();
 
 
 

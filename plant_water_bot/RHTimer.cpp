@@ -7,7 +7,7 @@
 
 int RHTimer::minutes_elapsed = 0;
 int RHTimer::hours_elapsed = 0;
-long unsigned RHTimer::next_min_millis = 0;
+unsigned long RHTimer::next_min_millis = 0;
 
 // ASSERT cur_interval should be first item in array intervals
 int RHTimer::cur_interval = 8;
@@ -39,7 +39,6 @@ int RHTimer::get_m_remaining() {
 }
 
 void RHTimer::update() {
-    static unsigned long last_check;
     // if next_min_millis is in the past...
     if(millis() > next_min_millis) {
         minutes_elapsed++;

@@ -14,12 +14,12 @@ class REWrapper {
         void button_action();
         void rotate_action(int delta);
         
-        long unsigned first_push;
-        const int push_cooldown = 300; //ms
+        unsigned long first_push;
+        const unsigned long push_cooldown = 300UL; //ms
         bool prev_RE_button;
         int rot_buffer;
-        long unsigned last_rot;
-        const int rot_delay = 100; // ms
+        unsigned long last_rot;
+        const unsigned long rot_delay = 100UL; // ms
         Encoder* encoder;
 
 };

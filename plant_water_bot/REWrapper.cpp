@@ -4,11 +4,13 @@
 #include "Arduino.h"
 #include "Machine.h"
 
+#define DEBUG
+
 REWrapper::REWrapper(Encoder* enc) {
-    first_push = 0;
+    first_push = 0UL;
     prev_RE_button = false;
     rot_buffer = 0;
-    last_rot = 0;
+    last_rot = 0UL;
     encoder = enc;
 }
 
@@ -40,7 +42,7 @@ void REWrapper::update() {
             Serial.println("rb = "+String(rot_buffer) +"   delta = "+String(delta));
         #endif
     } 
-    long unsigned lr = last_rot;
+    unsigned long lr = last_rot;
 
     
     // if its been more than rot_delay since last rotary action
@@ -62,9 +64,7 @@ void REWrapper::update() {
             #endif
             rotate_action(rb);
         }
-    } else if (now > lr + rot_delay) {
-    rot_buffer = 0;
-    }
+    } 
 
 }
 
