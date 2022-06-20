@@ -6,7 +6,7 @@
 
 class REWrapper {
     public:
-        REWrapper(Encoder enc);
+        REWrapper(Encoder* enc);
         void update();
 
     private:

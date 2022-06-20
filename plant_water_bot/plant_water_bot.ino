@@ -31,10 +31,8 @@ const int RE_BUT = RE_BUT_PIN; // rotary encoder button  // NOTE:  library does 
 const int RE_A = RE_A_PIN; // rotary encoder motion
 const int RE_B = RE_B_PIN; // rotary encoder motion
 Encoder encoder(RE_A, RE_B, RE_BUT); // set up rotary encoder
-REWrapper rew = REWrapper(encoder);
+REWrapper rew = REWrapper( &encoder);
 // LCD via I2C using A4 and A5
-//LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
-// this is set up in LCD_Wrapper
 
 
 
@@ -55,10 +53,6 @@ REWrapper rew = REWrapper(encoder);
 
     // rotary encoder
     EncoderInterrupt.begin( &encoder );
-
-    // initialize the lcd 
-    //lcd.init();                      
-   
 
     // default states
     RHTimer::start();

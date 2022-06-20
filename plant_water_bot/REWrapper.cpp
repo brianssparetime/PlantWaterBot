@@ -4,12 +4,12 @@
 #include "Arduino.h"
 #include "Machine.h"
 
-REWrapper::REWrapper(Encoder enc) {
+REWrapper::REWrapper(Encoder* enc) {
     first_push = 0;
     prev_RE_button = false;
     rot_buffer = 0;
     last_rot = 0;
-    encoder = &enc;
+    encoder = enc;
 }
 
 

@@ -1,0 +1,37 @@
+
+#include "Arduino.h" 
+#include <LiquidCrystal_I2C.h>
+#include "LCD_Wrapper.h"
+
+//comment out later for smoother running
+#define DEBUG
+
+
+
+  /*     ----------    S E T U P     --------- */
+
+
+  void setup() {
+
+    
+    #ifdef DEBUG 
+      Serial.begin(19200);
+      Serial.println("PlantBot online");
+    #endif
+
+    LCD_Wrapper::init();
+    LCD_Wrapper::backlight();
+    LCD_Wrapper::display("hello", "olleh");
+
+  }
+
+
+
+  /*     ----------    L O O P     --------- */
+
+
+
+  void loop() {
+
+
+  } // end loop
