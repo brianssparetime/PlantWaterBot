@@ -10,6 +10,9 @@ Machine::Machine(){
 }
 
 void Machine::changeState(UI_State* new_state) {
+    #ifdef DEBUG
+      Serial.println("changing states...");
+    #endif
     if (instance == NULL)
         instance = new Machine();
     UI_State *old_state = instance->current_state;

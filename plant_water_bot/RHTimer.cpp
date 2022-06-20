@@ -3,6 +3,7 @@
 #include "Arduino.h"
 #include "Relay.h"
 
+#define DEBUG
 
 int RHTimer::minutes_elapsed = 0;
 int RHTimer::hours_elapsed = 0;
@@ -16,41 +17,60 @@ const int RHTimer::intervals[5] = {8, 12, 24, 48, 72}; // hours
 
 void RHTimer::start() {
     unsigned long now = millis();
-    RHTimer::next_min_millis = now + 60 * 1000; // milliseconds to min 
+    next_min_millis = now + 60UL * 1000UL; // milliseconds to min 
+    hours_elapsed = 0;
+    minutes_elapsed = 0;
+    #ifdef DEBUG
+      Serial.println("timer start:  next_min_millis = "+ String(next_min_millis) + " and now = "+String(now));
+    #endif DEBUG
 }
 
 void RHTimer::start(int interval) {
-    RHTimer::cur_interval = interval;
+    cur_interval = interval;
     start();
 }
 
 int RHTimer::get_h_remaining() {
-    return RHTimer::cur_interval - RHTimer::hours_elapsed - 1;
+    return cur_interval - hours_elapsed - 1;
 }
 
 int RHTimer::get_m_remaining() {
-    return 60 - RHTimer::minutes_elapsed;
+    return 60 - minutes_elapsed;
 }
 
 void RHTimer::update() {
-    unsigned long now = millis();
+    static unsigned long last_check;
     // if next_min_millis is in the past...
-    if(now > RHTimer::next_min_millis) {
-        RHTimer::minutes_elapsed++;
-        RHTimer::next_min_millis = now + 60 * 1000; // milliseconds to min
-    }
-    if(RHTimer::minutes_elapsed == 60) {
-        RHTimer::hours_elapsed ++;
-        RHTimer::minutes_elapsed = 0;
-    }
-    if(RHTimer::hours_elapsed == RHTimer::cur_interval) {
-        alarm();
-        start(RHTimer::cur_interval);
+    if(millis() > next_min_millis) {
+        minutes_elapsed++;
+        next_min_millis = millis() + 60UL * 1000UL; // milliseconds to min
+        #ifdef DEBUG
+            Serial.println("minute tick");
+        #endif DEBUG
+
+        if(minutes_elapsed == 60) {
+            hours_elapsed ++;
+            minutes_elapsed = 0;
+            #ifdef DEBUG
+                Serial.println("hour tick");
+            #endif DEBUG
+
+            if(hours_elapsed == cur_interval) {
+                minutes_elapsed = 0;
+                hours_elapsed = 0;
+                next_min_millis = 0;
+                #ifdef DEBUG
+                    Serial.println("alarm tick");
+                #endif DEBUG
+                alarm();
+                start(cur_interval);
+            }
+        }
     }
 }
 
 int RHTimer::get_current_interval() {
-    return RHTimer::cur_interval;
+    return cur_interval;
 }
 
 

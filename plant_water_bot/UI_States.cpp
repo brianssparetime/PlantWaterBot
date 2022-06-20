@@ -53,6 +53,9 @@ UI_Welcome::UI_Welcome() {
 void UI_Welcome::activate() {
     start = millis();
     LCD_Wrapper::display("   PlantBot     ", "    active      ");
+    #ifdef DEBUG
+      Serial.println("UI Welcome activated");
+    #endif
 }
 
 void UI_Welcome::handle_button_press() {
@@ -73,7 +76,10 @@ void UI_Welcome::update() {
     }
 }
 
+
 /*********** UI_Interval *************/
+
+
 UI_Interval::UI_Interval() {
 }
 
@@ -81,8 +87,11 @@ void UI_Interval::activate() {
     int ci = RHTimer::get_current_interval();
     int hours_left = RHTimer::get_h_remaining();
     char sb[50];
-    sprintf(sb, "  %02dH (%02dH left)", ci, hours_left);
+    sprintf(sb, "%02d H (%02d H left)", ci, hours_left);
     LCD_Wrapper::display("< INTERVAL >", sb);
+    #ifdef DEBUG
+      Serial.println("UI Interval activated");
+    #endif
 }
 void UI_Interval::handle_button_press() {
     Machine::changeState(static_cast<UI_State *>(new UI_Interval_Set()));
@@ -100,9 +109,6 @@ UI_Interval_Set::UI_Interval_Set() {
     new_interval_selected = RHTimer::get_current_interval();
 }
 
-static int new_interval_selected;
-
-
 
 void UI_Interval_Set::adjust_lcd_state(int intv) {
     char sb[50];
@@ -114,6 +120,9 @@ void UI_Interval_Set::activate() {
     int ci = RHTimer::get_current_interval();
     adjust_lcd_state(ci);
     new_interval_selected = ci;
+    #ifdef DEBUG
+      Serial.println("UI Interval Set activated");
+    #endif
 }
 
 void UI_Interval_Set::handle_button_press() {

@@ -14,7 +14,6 @@
 //comment out later for smoother running
 #define DEBUG
 
-
 /*
 
   For use on Arduino Nano v3
@@ -44,7 +43,7 @@ REWrapper rew = REWrapper( &encoder);
 
     
     #ifdef DEBUG 
-      Serial.begin(19200);
+      Serial.begin(115200);
       Serial.println("PlantBot online");
     #endif
 
@@ -90,7 +89,9 @@ REWrapper rew = REWrapper( &encoder);
     
 
     // //update relay for turning off
-    Relay::update();
+    //Relay::update();
+
+
 
   } // end loop
 
