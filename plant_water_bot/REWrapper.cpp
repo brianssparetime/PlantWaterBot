@@ -31,6 +31,9 @@ void REWrapper::update() {
     // button
     if (pb && (first_push + push_cooldown < now)) {
         first_push = now; 
+        #ifdef DEBUG
+            Serial.println("button press");
+        #endif
         button_action();
     }
 

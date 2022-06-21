@@ -5,19 +5,30 @@
 #include "RHTimer.h"
 #include "Machine.h"
 
+#define DEBUG
+
+bool Relay::active = false;
+
 void Relay::turn_on() {
-    digitalWrite(Relay::pin, LOW);
+    #ifdef DEBUG
+      Serial.println("relay on");
+    #endif
+    digitalWrite(pin, LOW);
 }
 
 void Relay::turn_off() {
-    digitalWrite(Relay::pin, HIGH);
+    #ifdef DEBUG
+      Serial.println("relay off");
+    #endif
+    digitalWrite(pin, HIGH);
     RHTimer::start();
+    Serial.println("restarting timer...");
 }
 
 long unsigned Relay::amount_to_duration(int amount) {
     const int flowrate = 3; // ml per sec
     // (ml / (ml/s) ) * ms/s
-    return (amount / flowrate) * 1000;
+    return ((unsigned long) amount * 1000UL / (unsigned long) flowrate);
 }
 
 
@@ -25,35 +36,43 @@ int Relay::amount = 100; // ASSERT amount should be in array amounts
 const int Relay::amounts[5] = {10, 25, 50, 100, 200}; // hours
 // assert size of this list set in .h file
 
-void Relay::set_amount(int amount) {
-    Relay::amount = amount;
+void Relay::set_amount(int amt) {
+    amount = amt;
 }
 
 int Relay::get_amount() {
-    return Relay::amount;
+    return amount;
 }
 
 unsigned long Relay::get_duration() {
-    return amount_to_duration(Relay::amount);
+    return amount_to_duration(amount);
 
 }
 
 
 void Relay::activate() {
+    #ifdef DEBUG
+      Serial.println("relay activated");
+    #endif
     turn_on();
-    Relay::start_time = millis();
+    start_time = millis();
+    active = true;
     Machine::changeState(static_cast<UI_State *>(new UI_Watering()));
     // Note:  Do this after state transition to avoid the backlight call in changeState overriding this...
-    long unsigned ms = amount_to_duration(Relay::amount);
+    long unsigned ms = amount_to_duration(amount);
     LCD_Wrapper::backlight(ms);
 }
 
 void Relay::update() {
     long unsigned now = millis();
-    if(now - Relay::start_time > amount_to_duration(Relay::amount)) {
+    if(active && (now > start_time + amount_to_duration(amount))) {
+        #ifdef DEBUG
+          Serial.println("relay update - deactivating...");
+        #endif
         turn_off();
+        active = false;
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
     }
 }
 
-long unsigned Relay::start_time = 0; 
+long unsigned Relay::start_time = 0UL; 

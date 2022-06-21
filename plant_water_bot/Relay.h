@@ -22,5 +22,6 @@ class Relay {
         static const int pin = RELAY_PIN; 
         static int amount;
         static long unsigned start_time;
+        static bool active;
 
 };
