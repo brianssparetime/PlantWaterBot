@@ -1,5 +1,5 @@
 #pragma once
-#include "Pins.h"
+#include "PinsGlobals.h"
 
 // purely static
 
@@ -10,9 +10,6 @@ class Relay {
         static void set_amount(int amount);
         static int get_amount();
         static unsigned long get_duration();
-
-        static const int amounts_size = 5;
-        static const int amounts[5];
 
     private:
         static void turn_on();

@@ -4,10 +4,12 @@
 #include "LCD_Wrapper.h"
 #include "RHTimer.h"
 #include "Machine.h"
+#include "PinsGlobals.h"
 
 #define DEBUG
 
 bool Relay::active = false;
+int Relay::amount = Globals::amounts[0];
 
 void Relay::turn_on() {
     #ifdef DEBUG
@@ -30,11 +32,6 @@ long unsigned Relay::amount_to_duration(int amount) {
     // (ml / (ml/s) ) * ms/s
     return ((unsigned long) amount * 1000UL / (unsigned long) flowrate);
 }
-
-
-int Relay::amount = 100; // ASSERT amount should be in array amounts
-const int Relay::amounts[5] = {10, 25, 50, 100, 200}; // hours
-// assert size of this list set in .h file
 
 void Relay::set_amount(int amt) {
     amount = amt;

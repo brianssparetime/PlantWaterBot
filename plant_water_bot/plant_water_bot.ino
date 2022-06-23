@@ -1,5 +1,5 @@
 #include "Arduino.h" 
-#include "Pins.h"
+#include "PinsGlobals.h"
 #include "Encoder.h"
 #include <LiquidCrystal_I2C.h>
 

@@ -2,6 +2,7 @@
 #include "RHTimer.h"
 #include "Arduino.h"
 #include "Relay.h"
+#include "PinsGlobals.h"
 
 #define DEBUG
 
@@ -9,11 +10,7 @@ int RHTimer::minutes_elapsed = 0;
 int RHTimer::hours_elapsed = 0;
 unsigned long RHTimer::next_min_millis = 0;
 
-// ASSERT cur_interval should be first item in array intervals
-int RHTimer::cur_interval = 8;
-const int RHTimer::intervals[5] = {8, 12, 24, 48, 72}; // hours
-// assert size of this list set in .h file
-
+int RHTimer::cur_interval = Globals::intervals[0];
 
 void RHTimer::start() {
     unsigned long now = millis();

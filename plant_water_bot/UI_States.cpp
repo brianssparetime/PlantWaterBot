@@ -103,6 +103,11 @@ void UI_Interval::handle_rotation(int delta) {
 
 void UI_Interval::update() { }
 UI_Interval::~UI_Interval() {}
+
+
+
+
+
 /*********** UI_Interval_Set *************/
 
 UI_Interval_Set::UI_Interval_Set() {
@@ -136,11 +141,11 @@ void UI_Interval_Set::handle_button_press() {
 void UI_Interval_Set::handle_rotation(int delta) {
     if(delta > 0) {
         new_interval_selected = UI_State_Setter::next_right( \
-            new_interval_selected, RHTimer::intervals, RHTimer::intervals_size);
+            new_interval_selected, Globals::intervals, Globals::intervals_size);
         adjust_lcd_state(new_interval_selected);
     } else if (delta < 0) {
         new_interval_selected = UI_State_Setter::next_left( \
-            new_interval_selected, RHTimer::intervals, RHTimer::intervals_size);
+            new_interval_selected, Globals::intervals, Globals::intervals_size);
         adjust_lcd_state(new_interval_selected);
     }
 }
@@ -232,10 +237,10 @@ void UI_Amount_Set::handle_button_press() {
 }
 void UI_Amount_Set::handle_rotation(int delta) { 
     if(delta > 0) {
-        new_amount_selected = UI_State_Setter::next_right(new_amount_selected, Relay::amounts, Relay::amounts_size);
+        new_amount_selected = UI_State_Setter::next_right(new_amount_selected, Globals::amounts, Globals::amounts_size);
         adjust_lcd_state(new_amount_selected);
     } else if (delta < 0) {
-        new_amount_selected = UI_State_Setter::next_left(new_amount_selected, Relay::amounts, Relay::amounts_size);
+        new_amount_selected = UI_State_Setter::next_left(new_amount_selected, Globals::amounts, Globals::amounts_size);
         adjust_lcd_state(new_amount_selected);
     }
 }
