@@ -20,20 +20,16 @@
 
  */
 
-// --------- pins -----------  see Pins.h
 
-// relay
-const int REL = RELAY_PIN;   
 
+
+// --------- pins -----------       see PinsGlobals.h
 // rotary encoder
 const int RE_BUT = RE_BUT_PIN; // rotary encoder button  // NOTE:  library does pinmode pullup
 const int RE_A = RE_A_PIN; // rotary encoder motion
 const int RE_B = RE_B_PIN; // rotary encoder motion
 Encoder encoder(RE_A, RE_B, RE_BUT); // set up rotary encoder
 REWrapper rew = REWrapper( &encoder);
-// LCD via I2C using A4 and A5
-
-
 
 
   /*     ----------    S E T U P     --------- */
@@ -47,8 +43,9 @@ REWrapper rew = REWrapper( &encoder);
       Serial.println("PlantBot online");
     #endif
 
-    // set up pins
-    pinMode(REL, OUTPUT); // low active
+    // set up relay pins
+    Relay::init();
+
 
     // rotary encoder
     EncoderInterrupt.begin( &encoder );

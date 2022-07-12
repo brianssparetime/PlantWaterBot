@@ -98,7 +98,7 @@ void UI_Interval::handle_button_press() {
 }
 
 void UI_Interval::handle_rotation(int delta) {
-        Machine::changeState(static_cast<UI_State *>(new UI_Amount()));
+        Machine::changeState(static_cast<UI_State *>(new UI_Amount(0)));
 }
 
 void UI_Interval::update() { }
@@ -177,10 +177,7 @@ void UI_Watering::handle_rotation(int delta) {
 }
 
 void UI_Watering::update() { 
-    unsigned long now = millis();
-    if(now - start > 1000UL * Relay::get_duration()) {
-        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
-    }
+    // state change after timer ends is now handled within Relay::update()
 }
 UI_Watering::~UI_Watering() {}
 
@@ -188,22 +185,30 @@ UI_Watering::~UI_Watering() {}
 /*********** UI_Amount *************/
 
 
-UI_Amount::UI_Amount() { }
+UI_Amount::UI_Amount(int relay) { 
+    _relay = relay;
+}
 
 void UI_Amount::activate() {
     #ifdef DEBUG
-      Serial.println("UI Amount activated");
+      Serial.println("UI Amount" + String(_relay) + " activated");
     #endif
-    char sb[50];
-    sprintf(sb, "  %d ml  ", Relay::get_amount());
-    LCD_Wrapper::display("< AMOUNT >", sb);
+    char sba[20];
+    sprintf(sba, "< AMOUNT %d > ", _relay);
+    char sbb[20];
+    sprintf(sbb, "  %d ml  ", Relay::get_amount(_relay));
+    LCD_Wrapper::display(sba, sbb);
 
 }
 void UI_Amount::handle_button_press() { 
-    Machine::changeState(static_cast<UI_State *>(new UI_Amount_Set()));
+    Machine::changeState(static_cast<UI_State *>(new UI_Amount_Set(_relay)));
 }
 void UI_Amount::handle_rotation(int delta) {
-    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+    if(_relay < NUM_PUMPS) {
+        Machine::changeState(static_cast<UI_State *>(new UI_Amount(_relay+1)));
+    } else {
+        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+    }
 }
 
 void UI_Amount::update() { 
@@ -218,22 +223,23 @@ UI_Amount::~UI_Amount() {}
 /*********** UI_Amount_Set *************/
 
 
-UI_Amount_Set::UI_Amount_Set() {
-    new_amount_selected = Relay::get_amount();
+UI_Amount_Set::UI_Amount_Set(int relay) {
+    new_amount_selected = Relay::get_amount(_relay);
+    _relay = relay;
 }
 
 void UI_Amount_Set::activate() {
     #ifdef DEBUG
-      Serial.println("UI Amount Set activated");
+      Serial.println("UI Amount " + String(_relay) + " Set activated");
     #endif
     adjust_lcd_state(new_amount_selected);
 }
 void UI_Amount_Set::handle_button_press() { 
     #ifdef DEBUG
-      Serial.println("UI Amount Set:  setting new amount to "+ String(new_amount_selected));
+      Serial.println("UI Amount " + String(_relay) + " Set:  setting new amount to "+ String(new_amount_selected));
     #endif
-    Relay::set_amount(new_amount_selected);
-    Machine::changeState(static_cast<UI_State *>(new UI_Amount()));
+    Relay::set_amount(new_amount_selected, _relay);
+    Machine::changeState(static_cast<UI_State *>(new UI_Amount(_relay)));
 }
 void UI_Amount_Set::handle_rotation(int delta) { 
     if(delta > 0) {
@@ -249,10 +255,17 @@ void UI_Amount_Set::update() {
 
 // TODO:  perhaps implement this stuff in another inherited class
 void UI_Amount_Set::adjust_lcd_state(int intv) {
-    char sb[50];
-    sprintf(sb, "< %d ml >", intv);
-    LCD_Wrapper::display("  AMOUNT Set:", sb);
+    char sba[20];
+    sprintf(sba, "  AMOUNT %d Set:", _relay);
+    char sbb[20];
+    sprintf(sbb, "< %d ml >", intv);
+    LCD_Wrapper::display(sba, sbb);
 }
 
 
 UI_Amount_Set::~UI_Amount_Set() {}
+
+
+/*********** UI_Empty *************/
+
+// TODO:  consider not activating the relay if we sense empty/low.
