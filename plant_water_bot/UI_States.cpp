@@ -8,8 +8,14 @@
 
 #define DEBUG
 
-// Note:  cannot remove empty methods here... bummer.
+/*********** UI_State *************/
 
+// methods implemented here can be omitted from classes inheriting UI_State below
+// (as can constructors and destructors), as long as the implementions here match the
+// .h header file
+
+
+void UI_State::update() {}
 
 /*********** UI_State_Setter *************/
 
@@ -46,9 +52,6 @@ UI_State::~UI_State() {}
 
 /*********** UI_Welcome *************/
 
-UI_Welcome::UI_Welcome() { 
-    start = 0;
-}
 
 void UI_Welcome::activate() {
     #ifdef DEBUG
@@ -75,13 +78,9 @@ void UI_Welcome::update() {
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
     }
 }
-UI_Welcome::~UI_Welcome() {}
 
 /*********** UI_Interval *************/
 
-
-UI_Interval::UI_Interval() {
-}
 
 void UI_Interval::activate() {
     #ifdef DEBUG
@@ -101,18 +100,8 @@ void UI_Interval::handle_rotation(int delta) {
         Machine::changeState(static_cast<UI_State *>(new UI_Amount(0)));
 }
 
-void UI_Interval::update() { }
-UI_Interval::~UI_Interval() {}
-
-
-
-
 
 /*********** UI_Interval_Set *************/
-
-UI_Interval_Set::UI_Interval_Set() {
-    new_interval_selected = RHTimer::get_current_interval();
-}
 
 
 void UI_Interval_Set::adjust_lcd_state(int intv) {
@@ -150,14 +139,9 @@ void UI_Interval_Set::handle_rotation(int delta) {
     }
 }
 
-void UI_Interval_Set::update() { }
-UI_Interval_Set::~UI_Interval_Set() {}
-
 
 /*********** UI_Watering *************/
 
-
-UI_Watering::UI_Watering() { }
 
 void UI_Watering::activate() {
     #ifdef DEBUG
@@ -176,11 +160,7 @@ void UI_Watering::handle_rotation(int delta) {
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 
-void UI_Watering::update() { 
-    // state change after timer ends is now handled within Relay::update()
-}
-UI_Watering::~UI_Watering() {}
-
+// state change after timer ends is now handled within Relay::update()
 
 /*********** UI_Amount *************/
 
@@ -210,13 +190,6 @@ void UI_Amount::handle_rotation(int delta) {
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
     }
 }
-
-void UI_Amount::update() { 
-}
-
-UI_Amount::~UI_Amount() {}
-
-
 
 
 
@@ -250,8 +223,6 @@ void UI_Amount_Set::handle_rotation(int delta) {
         adjust_lcd_state(new_amount_selected);
     }
 }
-void UI_Amount_Set::update() { 
-}
 
 // TODO:  perhaps implement this stuff in another inherited class
 void UI_Amount_Set::adjust_lcd_state(int intv) {
@@ -263,7 +234,6 @@ void UI_Amount_Set::adjust_lcd_state(int intv) {
 }
 
 
-UI_Amount_Set::~UI_Amount_Set() {}
 
 
 /*********** UI_Empty *************/
