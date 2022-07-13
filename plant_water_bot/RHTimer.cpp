@@ -35,9 +35,14 @@ int RHTimer::get_m_remaining() {
     return 60 - minutes_elapsed;
 }
 
+
+
+
 void RHTimer::update() {
     // if next_min_millis is in the past...
     if(millis() > next_min_millis) {
+        // NOTE:  when millis() overflows and loops back to zero, we'll just wind up
+        // adding an extra minute because this will fire immediately.
         minutes_elapsed++;
         next_min_millis = millis() + 60UL * 1000UL; // milliseconds to min
         #ifdef DEBUG
