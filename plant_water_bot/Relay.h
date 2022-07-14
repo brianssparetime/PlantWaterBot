@@ -18,8 +18,8 @@ class Relay {
         static unsigned long amount_to_duration(int amount);
         static unsigned long get_max_duration();
 
-        static int amount[NUM_PUMPS];
-        static unsigned long start_time;
-        static int active;
+        static int _amount[NUM_PUMPS];
+        static unsigned long _start_time;
+        static int _active;
 
 };

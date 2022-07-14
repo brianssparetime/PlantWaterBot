@@ -4,36 +4,42 @@
 #include "Arduino.h"
 #include <assert.h>
 
-long unsigned LCD_Wrapper::last_action = 0;
-long unsigned LCD_Wrapper::specified_ontime = 0;
-bool LCD_Wrapper::quiet = false;
+// long unsigned LCD_Wrapper::_last_action = 0;
+// long unsigned LCD_Wrapper::_specified_ontime = 0;
+// bool LCD_Wrapper::_quiet = false;
 LiquidCrystal_I2C lcd_actual(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
-LiquidCrystal_I2C* LCD_Wrapper::lcd = &lcd_actual;
+LiquidCrystal_I2C* LCD_Wrapper::_lcd = &lcd_actual;
 
 
 void LCD_Wrapper::init() {
-    lcd->init();
-    lcd->backlight();
-    lcd->setCursor(0,0); // col, row
-    lcd->print("  PLANT BOT");
+    _lcd->init();
+    _lcd->backlight();
+    _lcd->setCursor(0,0); // col, row
+    _lcd->print("  PLANT BOT");
 }
 
 void LCD_Wrapper::backlight() {
-    last_action = millis();
-    lcd->backlight();
-    quiet = false;
-    specified_ontime = 0;
+    // _last_action = millis();
+    _lcd->backlight();
+    // _quiet = false;
+    // _specified_ontime = 0;
 }
 
-void LCD_Wrapper::backlight(long unsigned ms) {
-    last_action = millis();
-    specified_ontime = ms;
-    lcd->backlight();
-    quiet = false;
+// void LCD_Wrapper::backlight(long unsigned ms) {
+    // _last_action = millis();
+    // _specified_ontime = ms;
+    // _lcd->backlight();
+    // _quiet = false;
+// }
+void LCD_Wrapper::backlightOff() {
+    // _last_action = millis();
+    _lcd->noBacklight();
+    // _quiet = false;
+    // _specified_ontime = 0;
 }
 
 void LCD_Wrapper::display(String line1, String line2) {
-    lcd->clear();
+    _lcd->clear();
     #ifdef DEBUG 
       if(line1.length() >= 16) {
         Serial.println("display line too long:  " + line1);
@@ -42,27 +48,27 @@ void LCD_Wrapper::display(String line1, String line2) {
         Serial.println("display line too long:  " + line2);
       }
     #endif
-    lcd->setCursor(0,0); // col, row)
-    lcd->print(line1);
-    lcd->setCursor(0,1); // col, row)
-    lcd->print(line2);
+    _lcd->setCursor(0,0); // col, row)
+    _lcd->print(line1);
+    _lcd->setCursor(0,1); // col, row)
+    _lcd->print(line2);
 }
 
 
 void LCD_Wrapper::update() {
-    long unsigned now = millis();
-    if (quiet) {
-        return;
-    }
-    if(specified_ontime > 0) {
-        if(now - last_action > specified_ontime) {
-            specified_ontime = 0;
-            lcd->noBacklight();
-            quiet = true;
-        }
-    }
-    if (now > last_action + keep_on_time) {
-        lcd->noBacklight();
-        quiet = true;
-    }
+    // long unsigned now = millis();
+    // if (_quiet) {
+    //     return;
+    // }
+    // if(_specified_ontime > 0) {
+    //     if(now - _last_action > _specified_ontime) {
+    //         _specified_ontime = 0;
+    //         _lcd->noBacklight();
+    //         _quiet = true;
+    //     }
+    // }
+    // if (now > _last_action + _keep_on_time) {
+    //     _lcd->noBacklight();
+    //     _quiet = true;
+    // }
 }

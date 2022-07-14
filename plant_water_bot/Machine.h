@@ -19,11 +19,13 @@ class Machine {
         static void update();
         static void handle_button_press();
         static void handle_rotation(int delta);
+        static unsigned long get_last_action();
 
 
     private:
         Machine(); //= default;
-        UI_State* current_state;
-        static Machine* instance;
+        UI_State* _current_state;
+        static Machine* _instance;
+        static unsigned long _last_action;
 
 };

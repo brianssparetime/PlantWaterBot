@@ -6,33 +6,33 @@
 
 #define DEBUG
 
-int RHTimer::minutes_elapsed = 0;
-int RHTimer::hours_elapsed = 0;
-unsigned long RHTimer::next_min_millis = 0;
+int RHTimer::_minutes_elapsed = 0;
+int RHTimer::_hours_elapsed = 0;
+unsigned long RHTimer::_next_min_millis = 0;
 
-int RHTimer::cur_interval = Globals::intervals[0];
+int RHTimer::_cur_interval = Globals::intervals[0];
 
 void RHTimer::start() {
     unsigned long now = millis();
-    next_min_millis = now + 60UL * 1000UL; // milliseconds to min 
-    hours_elapsed = 0;
-    minutes_elapsed = 0;
+    _next_min_millis = now + 60UL * 1000UL; // milliseconds to min 
+    _hours_elapsed = 0;
+    _minutes_elapsed = 0;
     #ifdef DEBUG
-      Serial.println("timer start:  next_min_millis = "+ String(next_min_millis) + " and now = "+String(now));
+      Serial.println("timer start:  next_min_millis = "+ String(_next_min_millis) + " and now = "+String(now));
     #endif DEBUG
 }
 
 void RHTimer::start(int interval) {
-    cur_interval = interval;
+    _cur_interval = interval;
     start();
 }
 
 int RHTimer::get_h_remaining() {
-    return cur_interval - hours_elapsed - 1;
+    return _cur_interval - _hours_elapsed - 1;
 }
 
 int RHTimer::get_m_remaining() {
-    return 60 - minutes_elapsed;
+    return 60 - _minutes_elapsed - 1;
 }
 
 
@@ -40,38 +40,38 @@ int RHTimer::get_m_remaining() {
 
 void RHTimer::update() {
     // if next_min_millis is in the past...
-    if(millis() > next_min_millis) {
+    if(millis() > _next_min_millis) {
         // NOTE:  when millis() overflows and loops back to zero, we'll just wind up
         // adding an extra minute because this will fire immediately.
-        minutes_elapsed++;
-        next_min_millis = millis() + 60UL * 1000UL; // milliseconds to min
+        _minutes_elapsed++;
+        _next_min_millis = millis() + 60UL * 1000UL; // milliseconds to min
         #ifdef DEBUG
             Serial.println("minute tick");
         #endif DEBUG
 
-        if(minutes_elapsed == 60) {
-            hours_elapsed ++;
-            minutes_elapsed = 0;
+        if(_minutes_elapsed >= 60) {
+            _hours_elapsed ++;
+            _minutes_elapsed = 0;
             #ifdef DEBUG
                 Serial.println("hour tick");
             #endif DEBUG
 
-            if(hours_elapsed == cur_interval) {
-                minutes_elapsed = 0;
-                hours_elapsed = 0;
-                next_min_millis = 0;
+            if(_hours_elapsed >= _cur_interval) {
+                _minutes_elapsed = 0;
+                _hours_elapsed = 0;
+                _next_min_millis = 0;
                 #ifdef DEBUG
                     Serial.println("alarm tick");
                 #endif DEBUG
                 alarm();
-                start(cur_interval);
+                start(_cur_interval);
             }
         }
     }
 }
 
 int RHTimer::get_current_interval() {
-    return cur_interval;
+    return _cur_interval;
 }
 
 

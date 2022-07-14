@@ -15,7 +15,11 @@
 // .h header file
 
 
-void UI_State::update() {}
+void UI_State::update() {
+    if( millis() - Machine::get_last_action() > UI_State::_inactive_timeout ) {
+        Machine::changeState(static_cast<UI_State *>(new UI_Inactive()));
+    }
+}
 
 /*********** UI_State_Setter *************/
 
@@ -57,7 +61,7 @@ void UI_Welcome::activate() {
     #ifdef DEBUG
       Serial.println("UI Welcome activated");
     #endif
-    start = millis();
+    _start = millis();
     LCD_Wrapper::display("   PlantBot     ", "    active      ");
 }
 
@@ -70,7 +74,7 @@ void UI_Welcome::handle_rotation(int delta) {
 
 void UI_Welcome::update() { 
     unsigned long now = millis();
-    if(now - start > 1000 * duration) {
+    if(now - _start > 1000UL * _duration) {
         #ifdef DEBUG 
             Serial.println("about to change to interval");
         #endif 
@@ -86,10 +90,8 @@ void UI_Interval::activate() {
     #ifdef DEBUG
       Serial.println("UI Interval activated");
     #endif
-    int ci = RHTimer::get_current_interval();
-    int hours_left = RHTimer::get_h_remaining();
-    char sb[50];
-    sprintf(sb, "%02d H (%02d H left)", ci, hours_left);
+    char sb[17];
+    UI_Inactive::get_time_left(sb);
     LCD_Wrapper::display("< INTERVAL >", sb);
 }
 void UI_Interval::handle_button_press() {
@@ -105,7 +107,7 @@ void UI_Interval::handle_rotation(int delta) {
 
 
 void UI_Interval_Set::adjust_lcd_state(int intv) {
-    char sb[50];
+    char sb[17];
     sprintf(sb, "< %02dH >", intv);
     LCD_Wrapper::display("  INTERVAL Set:", sb);
 }
@@ -116,26 +118,26 @@ void UI_Interval_Set::activate() {
     #endif
     int ci = RHTimer::get_current_interval();
     adjust_lcd_state(ci);
-    new_interval_selected = ci;
+    _new_interval_selected = ci;
 }
 
 void UI_Interval_Set::handle_button_press() {
     #ifdef DEBUG
-      Serial.println("UI Interval Set:  new interval set to " + String(new_interval_selected));
+      Serial.println("UI Interval Set:  new interval set to " + String(_new_interval_selected));
     #endif
-    RHTimer::start(new_interval_selected);
+    RHTimer::start(_new_interval_selected);
     Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 
 void UI_Interval_Set::handle_rotation(int delta) {
     if(delta > 0) {
-        new_interval_selected = UI_State_Setter::next_right( \
-            new_interval_selected, Globals::intervals, Globals::intervals_size);
-        adjust_lcd_state(new_interval_selected);
+        _new_interval_selected = UI_State_Setter::next_right( \
+            _new_interval_selected, Globals::intervals, Globals::intervals_size);
+        adjust_lcd_state(_new_interval_selected);
     } else if (delta < 0) {
-        new_interval_selected = UI_State_Setter::next_left( \
-            new_interval_selected, Globals::intervals, Globals::intervals_size);
-        adjust_lcd_state(new_interval_selected);
+        _new_interval_selected = UI_State_Setter::next_left( \
+            _new_interval_selected, Globals::intervals, Globals::intervals_size);
+        adjust_lcd_state(_new_interval_selected);
     }
 }
 
@@ -147,7 +149,7 @@ void UI_Watering::activate() {
     #ifdef DEBUG
       Serial.println("UI Watering activated");
     #endif
-    this->start = millis();
+    this->_start = millis();
     LCD_Wrapper::display("    Slaking     ", "     Thirst!    ");
 
 }
@@ -173,9 +175,9 @@ void UI_Amount::activate() {
     #ifdef DEBUG
       Serial.println("UI Amount" + String(_relay) + " activated");
     #endif
-    char sba[20];
+    char sba[17];
     sprintf(sba, "< AMOUNT %d > ", _relay);
-    char sbb[20];
+    char sbb[17];
     sprintf(sbb, "  %d ml  ", Relay::get_amount(_relay));
     LCD_Wrapper::display(sba, sbb);
 
@@ -197,7 +199,7 @@ void UI_Amount::handle_rotation(int delta) {
 
 
 UI_Amount_Set::UI_Amount_Set(int relay) {
-    new_amount_selected = Relay::get_amount(_relay);
+    _new_amount_selected = Relay::get_amount(_relay);
     _relay = relay;
 }
 
@@ -205,35 +207,71 @@ void UI_Amount_Set::activate() {
     #ifdef DEBUG
       Serial.println("UI Amount " + String(_relay) + " Set activated");
     #endif
-    adjust_lcd_state(new_amount_selected);
+    adjust_lcd_state(_new_amount_selected);
 }
 void UI_Amount_Set::handle_button_press() { 
     #ifdef DEBUG
-      Serial.println("UI Amount " + String(_relay) + " Set:  setting new amount to "+ String(new_amount_selected));
+      Serial.println("UI Amount " + String(_relay) + " Set:  setting new amount to "+ String(_new_amount_selected));
     #endif
-    Relay::set_amount(new_amount_selected, _relay);
+    Relay::set_amount(_new_amount_selected, _relay);
     Machine::changeState(static_cast<UI_State *>(new UI_Amount(_relay)));
 }
 void UI_Amount_Set::handle_rotation(int delta) { 
     if(delta > 0) {
-        new_amount_selected = UI_State_Setter::next_right(new_amount_selected, Globals::amounts, Globals::amounts_size);
-        adjust_lcd_state(new_amount_selected);
+        _new_amount_selected = UI_State_Setter::next_right(_new_amount_selected, Globals::amounts, Globals::amounts_size);
+        adjust_lcd_state(_new_amount_selected);
     } else if (delta < 0) {
-        new_amount_selected = UI_State_Setter::next_left(new_amount_selected, Globals::amounts, Globals::amounts_size);
-        adjust_lcd_state(new_amount_selected);
+        _new_amount_selected = UI_State_Setter::next_left(_new_amount_selected, Globals::amounts, Globals::amounts_size);
+        adjust_lcd_state(_new_amount_selected);
     }
 }
 
 // TODO:  perhaps implement this stuff in another inherited class
 void UI_Amount_Set::adjust_lcd_state(int intv) {
-    char sba[20];
+    char sba[17];
     sprintf(sba, "  AMOUNT %d Set:", _relay);
-    char sbb[20];
+    char sbb[17];
     sprintf(sbb, "< %d ml >", intv);
     LCD_Wrapper::display(sba, sbb);
 }
 
 
+/*********** UI_Inactive *************/
+
+static void UI_Inactive::get_time_left(char* sb) {
+    int ci = RHTimer::get_current_interval();
+    int h_left = RHTimer::get_h_remaining();
+    int m_left = RHTimer::get_m_remaining();
+    sprintf(sb, " %02dh%02dm / %02dh", h_left, m_left, ci);
+    return sb;
+}
+
+void UI_Inactive::activate() {
+    #ifdef DEBUG
+      Serial.println("UI Inactive activated");
+    #endif
+    _start = millis();
+    char sb[17];
+    UI_Inactive::get_time_left(sb);
+    LCD_Wrapper::display("   PlantBot     ", sb);
+}
+
+void UI_Inactive::handle_button_press() {
+    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+ }
+void UI_Inactive::handle_rotation(int delta) { 
+    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+}
+
+void UI_Inactive::update() {
+    // Note:  because this doesn't explicitly call UI_State::update(), that method is overridden
+    // and not invoked from here, so we don't have to worry about constantly changing to Inactive
+    unsigned long lcd_turnoff_delay = 1000UL;
+    if( millis() - _start > lcd_turnoff_delay) {
+        LCD_Wrapper::backlightOff();
+    }
+
+}
 
 
 /*********** UI_Empty *************/

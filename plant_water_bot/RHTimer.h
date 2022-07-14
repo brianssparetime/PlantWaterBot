@@ -16,8 +16,8 @@ class RHTimer {
 
         static void alarm();
 
-        static unsigned long next_min_millis;
-        static int minutes_elapsed;
-        static int hours_elapsed;
-        static int cur_interval;
+        static unsigned long _next_min_millis;
+        static int _minutes_elapsed;
+        static int _hours_elapsed;
+        static int _cur_interval;
 };

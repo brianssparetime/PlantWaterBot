@@ -74,9 +74,6 @@ REWrapper rew = REWrapper( &encoder);
 
     // // update rotary encoder
     rew.update();
-    // #ifdef DEBUG 
-    //   Serial.println("rew update");
-    // #endif 
 
     // update lcd backlight auto-off
     LCD_Wrapper::update();
@@ -84,7 +81,6 @@ REWrapper rew = REWrapper( &encoder);
     //update Machine for any state auto-transitions
     Machine::update(); 
     
-
     // //update relay for turning off
     Relay::update();
 
@@ -140,6 +136,7 @@ REWrapper rew = REWrapper( &encoder);
     https://stackoverflow.com/questions/14676709/c-code-for-state-machine
     https://forum.arduino.cc/t/how-to-write-an-arduino-library-with-a-singleton-object/666625/2
     https://stackoverflow.com/questions/36240473/singleton-pattern-cannot-call-member-function-without-object
+    https://stackoverflow.com/questions/64563173/state-machine-change-state
 
 
 

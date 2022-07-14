@@ -5,8 +5,10 @@
 
 #define DEBUG
 
+unsigned long Machine::_last_action = 0UL;
+
 Machine::Machine(){
-    current_state = new UI_Welcome();
+    _current_state = new UI_Welcome();
 }
 
 void Machine::changeState(UI_State* new_state) {
@@ -15,27 +17,40 @@ void Machine::changeState(UI_State* new_state) {
     #endif
     // if (instance == NULL)
     //     instance = new Machine();
-    UI_State *old_state = instance->current_state;
-    instance->current_state = new_state;
+    UI_State *old_state = _instance->_current_state;
+    _instance->_current_state = new_state;
     delete old_state; 
     LCD_Wrapper::backlight();
-    instance->current_state->activate();
+    _instance->_current_state->activate();
 }
 
 void Machine::init() {
-  getInstance();
+    getInstance();
 }
 
 Machine* Machine::getInstance() {
-  if (instance == NULL)
-      instance = new Machine();
-  return instance;
+    if (_instance == NULL)
+        _instance = new Machine();
+    return _instance;
 }
 
-void Machine::activate() { instance->current_state->activate();}
-void Machine::update() { instance->current_state->update(); }
-void Machine::handle_button_press() { instance->current_state->handle_button_press();}
-void Machine::handle_rotation(int delta) { instance->current_state->handle_rotation(delta);}
+void Machine::activate() { _instance->_current_state->activate();}
+void Machine::update() { 
+    _instance->_current_state->update(); 
+    }
+void Machine::handle_button_press() { 
+    _last_action = millis();
+    _instance->_current_state->handle_button_press();
+}
+void Machine::handle_rotation(int delta) { 
+    _last_action = millis();
+    _instance->_current_state->handle_rotation(delta);
+}
 
-Machine* Machine::instance = NULL;
+
+unsigned long Machine::get_last_action() {
+    return _last_action;
+}
+
+Machine* Machine::_instance = NULL;
 
