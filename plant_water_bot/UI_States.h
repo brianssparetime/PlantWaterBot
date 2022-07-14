@@ -8,6 +8,8 @@ class UI_State {
         virtual void activate();
         virtual void update();
         virtual void handle_button_press();
+        virtual void handle_button_long_press();
+        virtual void handle_button_long_release();
         virtual void handle_rotation(int delta);
         virtual ~UI_State();
     private:
@@ -105,6 +107,14 @@ class UI_Inactive : public UI_State {
         virtual void update();
     private:
         unsigned long _start;
+};
+
+class UI_Test : public UI_State {
+    public:
+        virtual void activate();
+        virtual void handle_button_long_press();
+        virtual void handle_button_long_release();
+        virtual void handle_rotation(int delta);
 };
 
 // TODO:  define and implement low/empty sensor states

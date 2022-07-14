@@ -29,13 +29,29 @@ void REWrapper::update() {
 
 
     // button
-    if (pb && (first_push + push_cooldown < now)) {
+    if (pb && (now - first_push > push_cooldown)) {
         first_push = now; 
         #ifdef DEBUG
             Serial.println("button press");
         #endif
-        button_action();
+        button_press();
     }
+    // TODO:  maybe don't issue both down and long both?  but that induces lag
+    if (pb && (now - first_push > _long_press_delay)) {
+        first_push = now; 
+        _long_press = true;
+        #ifdef DEBUG
+            Serial.println("button long press");
+        #endif
+        button_long_press();
+    }
+    if(_long_press && (! pb) ) {
+        #ifdef DEBUG
+            Serial.println("button long release");
+        #endif
+        button_long_release();
+    }
+
 
     // rotate
     if(delta != 0) {
@@ -59,24 +75,31 @@ void REWrapper::update() {
                 dir = "Right  ";
                 Serial.println(dir + ":  rb = "+String(rb) );
             #endif
-            rotate_action(rb);
+            rotation(rb);
         } else if (rb < 0) {
             #ifdef DEBUG
                 dir = "Left   ";
                 Serial.println(dir + ":  rb = "+String(rb) );
             #endif
-            rotate_action(rb);
+            rotation(rb);
         }
     } 
 
 }
 
-void REWrapper::button_action() {
-    LCD_Wrapper::backlight();
+void REWrapper::button_press() {
     Machine::handle_button_press();
 }
 
-void REWrapper::rotate_action(int delta) {
+void REWrapper::button_long_press() {
+    Machine::handle_button_long_press();
+}
+
+void REWrapper::button_long_release() {
+    Machine::handle_button_long_release();
+}
+
+void REWrapper::rotation(int delta) {
     LCD_Wrapper::backlight();
     Machine::handle_rotation(delta);
 }

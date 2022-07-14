@@ -14,12 +14,20 @@
 // (as can constructors and destructors), as long as the implementions here match the
 // .h header file
 
+// these methods don't get invoked unless a) not defined for the inheriting class, or 
+// b) explicitly called by inheriting class
+
 
 void UI_State::update() {
     if( millis() - Machine::get_last_action() > UI_State::_inactive_timeout ) {
         Machine::changeState(static_cast<UI_State *>(new UI_Inactive()));
     }
 }
+
+void UI_State::handle_button_press() { }
+void UI_State::handle_button_long_press() { }
+void UI_State::handle_button_long_release() { }
+void UI_State::handle_rotation(int delta) { }
 
 /*********** UI_State_Setter *************/
 
@@ -67,7 +75,7 @@ void UI_Welcome::activate() {
 
 void UI_Welcome::handle_button_press() {
     Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
- }
+}
 void UI_Welcome::handle_rotation(int delta) { 
     Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
@@ -99,7 +107,11 @@ void UI_Interval::handle_button_press() {
 }
 
 void UI_Interval::handle_rotation(int delta) {
+    if(delta > 0) {
         Machine::changeState(static_cast<UI_State *>(new UI_Amount(0)));
+    } else {
+        Machine::changeState(static_cast<UI_State *>(new UI_Test()));
+    }
 }
 
 
@@ -156,7 +168,7 @@ void UI_Watering::activate() {
 // TODO: consider adding a cancel state
 // TODO:  consider adding a test/manual activation state
 void UI_Watering::handle_button_press() { 
-        Machine::changeState(static_cast<UI_State *>(new UI_Interval_Set()));
+        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 void UI_Watering::handle_rotation(int delta) { 
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
@@ -186,10 +198,19 @@ void UI_Amount::handle_button_press() {
     Machine::changeState(static_cast<UI_State *>(new UI_Amount_Set(_relay)));
 }
 void UI_Amount::handle_rotation(int delta) {
-    if(_relay < NUM_PUMPS) {
-        Machine::changeState(static_cast<UI_State *>(new UI_Amount(_relay+1)));
+    // TODO  probably a better way to do this?
+    if(delta > 0) {
+        if(_relay < NUM_PUMPS - 1) {
+            Machine::changeState(static_cast<UI_State *>(new UI_Amount(_relay+1)));
+        } else {
+            Machine::changeState(static_cast<UI_State *>(new UI_Test()));
+        }
     } else {
-        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+        if(_relay > 0) {
+            Machine::changeState(static_cast<UI_State *>(new UI_Amount(_relay-1)));
+        } else {
+            Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+        }
     }
 }
 
@@ -258,7 +279,7 @@ void UI_Inactive::activate() {
 
 void UI_Inactive::handle_button_press() {
     Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
- }
+}
 void UI_Inactive::handle_rotation(int delta) { 
     Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
@@ -272,6 +293,36 @@ void UI_Inactive::update() {
     }
 
 }
+
+/*********** UI_Test *************/
+
+void UI_Test::activate() {
+    #ifdef DEBUG
+      Serial.println("UI Test activated");
+    #endif
+    LCD_Wrapper::display("  < TEST >  ","press and hold");
+}
+
+void UI_Test::handle_button_long_press() {
+    LCD_Wrapper::display("  < TEST >  ","Oh Yeah Baby!");
+    Relay::turn_on();
+}
+void UI_Test::handle_button_long_release() {
+    Relay::turn_off();
+    Machine::changeState(static_cast<UI_State *>(new UI_Test()));
+}
+
+void UI_Test::handle_rotation(int delta) { 
+    if(delta > 0) {
+        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+    } else {
+        Machine::changeState(static_cast<UI_State *>(new UI_Amount(NUM_PUMPS - 1)));
+    }
+}
+
+
+
+
 
 
 /*********** UI_Empty *************/

@@ -31,7 +31,12 @@ void Relay::turn_on() {
     }
 }
 
-// TODO:  fix so that only last relay restarts timer
+void Relay::turn_off() {
+    for(int i = 0; i < NUM_PUMPS; i++) {
+        turn_off(i);
+    }
+}
+
 void Relay::turn_off(int relay) {
     #ifdef DEBUG
       Serial.println("relay " + String(relay + 1) + " off");
@@ -79,13 +84,12 @@ void Relay::update() {
                 Serial.println("relay " + String(i+1) + " update - deactivating...");
             #endif
             turn_off(i);
+            if(_active == 0) {
+                RHTimer::start();
+                Serial.println("restarting timer...");
+                Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+            }
         }
-        
-    }
-    if(_active == 0) {
-        RHTimer::start();
-        Serial.println("restarting timer...");
-        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
     }
 }
 

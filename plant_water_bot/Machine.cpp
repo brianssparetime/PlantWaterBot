@@ -42,6 +42,14 @@ void Machine::handle_button_press() {
     _last_action = millis();
     _instance->_current_state->handle_button_press();
 }
+void Machine::handle_button_long_press() { 
+    _last_action = millis();
+    _instance->_current_state->handle_button_long_press();
+}
+void Machine::handle_button_long_release() { 
+    _last_action = millis();
+    _instance->_current_state->handle_button_long_release();
+}
 void Machine::handle_rotation(int delta) { 
     _last_action = millis();
     _instance->_current_state->handle_rotation(delta);
