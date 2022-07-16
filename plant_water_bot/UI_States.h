@@ -11,7 +11,6 @@ class UI_State {
         virtual void handle_button_long_press();
         virtual void handle_button_long_release();
         virtual void handle_rotation(int delta);
-        virtual ~UI_State();
     private:
         static const unsigned long _inactive_timeout = 5UL * 1000UL; 
 
@@ -31,7 +30,7 @@ class UI_Welcome : public UI_State {
         virtual void handle_button_press();
         virtual void handle_rotation(int delta);
     private:
-        const int _duration = 3; // seconds
+        const int _duration = 4; // seconds
         unsigned long _start;
         
 
@@ -63,6 +62,8 @@ class UI_Watering : public UI_State {
         virtual void activate();
         virtual void handle_button_press();
         virtual void handle_rotation(int delta);
+        virtual void update();
+        virtual ~UI_Watering();
     private:
         unsigned long _start;
         
@@ -115,6 +116,8 @@ class UI_Test : public UI_State {
         virtual void handle_button_long_press();
         virtual void handle_button_long_release();
         virtual void handle_rotation(int delta);
+        virtual void update();
+        virtual ~UI_Test();
 };
 
 // TODO:  define and implement low/empty sensor states

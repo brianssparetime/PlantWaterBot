@@ -3,6 +3,8 @@
 #include "Arduino.h"
 #include "Relay.h"
 #include "PinsGlobals.h"
+#include "Machine.h"
+#include "UI_States.h"
 
 #define DEBUG
 
@@ -79,6 +81,5 @@ void RHTimer::alarm() {
     #ifdef DEBUG
         Serial.println("==========ALARM=================="); 
     #endif DEBUG
-    Relay::activate();
-
+    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }

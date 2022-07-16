@@ -19,23 +19,11 @@ void LCD_Wrapper::init() {
 }
 
 void LCD_Wrapper::backlight() {
-    // _last_action = millis();
     _lcd->backlight();
-    // _quiet = false;
-    // _specified_ontime = 0;
 }
 
-// void LCD_Wrapper::backlight(long unsigned ms) {
-    // _last_action = millis();
-    // _specified_ontime = ms;
-    // _lcd->backlight();
-    // _quiet = false;
-// }
 void LCD_Wrapper::backlightOff() {
-    // _last_action = millis();
     _lcd->noBacklight();
-    // _quiet = false;
-    // _specified_ontime = 0;
 }
 
 void LCD_Wrapper::display(String line1, String line2) {
@@ -56,19 +44,4 @@ void LCD_Wrapper::display(String line1, String line2) {
 
 
 void LCD_Wrapper::update() {
-    // long unsigned now = millis();
-    // if (_quiet) {
-    //     return;
-    // }
-    // if(_specified_ontime > 0) {
-    //     if(now - _last_action > _specified_ontime) {
-    //         _specified_ontime = 0;
-    //         _lcd->noBacklight();
-    //         _quiet = true;
-    //     }
-    // }
-    // if (now > _last_action + _keep_on_time) {
-    //     _lcd->noBacklight();
-    //     _quiet = true;
-    // }
 }

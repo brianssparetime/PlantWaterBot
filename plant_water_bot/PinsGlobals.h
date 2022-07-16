@@ -15,8 +15,8 @@
 #define LOW_INDICATOR A1 // relay 2 on the pcb
 
 
-#define NUM_PUMPS 2
 //relay
+#define NUM_PUMPS 2
 // #define RELAY_PIN_A A0  // relay 1
 // #define RELAY_PIN_B A1  // relay 2
 

@@ -35,9 +35,7 @@ Machine* Machine::getInstance() {
 }
 
 void Machine::activate() { _instance->_current_state->activate();}
-void Machine::update() { 
-    _instance->_current_state->update(); 
-    }
+void Machine::update() { _instance->_current_state->update(); }
 void Machine::handle_button_press() { 
     _last_action = millis();
     _instance->_current_state->handle_button_press();

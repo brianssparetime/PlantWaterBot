@@ -11,6 +11,7 @@ class Relay {
         static void set_amount(int amount, int relay);
         static int get_amount(int relay);
         static unsigned long get_duration(int relay);
+        static void testing(bool t);
         static void turn_on();
         static void turn_off(int relay);
         static void turn_off();
@@ -22,5 +23,6 @@ class Relay {
         static int _amount[NUM_PUMPS];
         static unsigned long _start_time;
         static int _active;
+        static bool _testing;
 
 };

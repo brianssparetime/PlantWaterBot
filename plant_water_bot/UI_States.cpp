@@ -20,6 +20,9 @@
 
 void UI_State::update() {
     if( millis() - Machine::get_last_action() > UI_State::_inactive_timeout ) {
+        #ifdef DEBUG
+        Serial.println("going inactive!");
+        #endif
         Machine::changeState(static_cast<UI_State *>(new UI_Inactive()));
     }
 }
@@ -60,7 +63,6 @@ static int UI_State_Setter::next_right(int current, int arr[], int arr_size) {
     }
 }
 
-UI_State::~UI_State() {}
 
 /*********** UI_Welcome *************/
 
@@ -163,16 +165,25 @@ void UI_Watering::activate() {
     #endif
     this->_start = millis();
     LCD_Wrapper::display("    Slaking     ", "     Thirst!    ");
+    Relay::activate();
 
 }
-// TODO: consider adding a cancel state
-// TODO:  consider adding a test/manual activation state
+
 void UI_Watering::handle_button_press() { 
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 void UI_Watering::handle_rotation(int delta) { 
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
+
+// disable going inactive!
+void UI_Watering::update() {}
+
+// turn off before exiting state
+UI_Watering::~UI_Watering() {
+    Relay::turn_off();
+}
+
 
 // state change after timer ends is now handled within Relay::update()
 
@@ -185,10 +196,10 @@ UI_Amount::UI_Amount(int relay) {
 
 void UI_Amount::activate() {
     #ifdef DEBUG
-      Serial.println("UI Amount" + String(_relay) + " activated");
+      Serial.println("UI Amount" + String(_relay + 1) + " activated");
     #endif
     char sba[17];
-    sprintf(sba, "< AMOUNT %d > ", _relay);
+    sprintf(sba, "< AMOUNT %d > ", _relay + 1);
     char sbb[17];
     sprintf(sbb, "  %d ml  ", Relay::get_amount(_relay));
     LCD_Wrapper::display(sba, sbb);
@@ -226,13 +237,14 @@ UI_Amount_Set::UI_Amount_Set(int relay) {
 
 void UI_Amount_Set::activate() {
     #ifdef DEBUG
-      Serial.println("UI Amount " + String(_relay) + " Set activated");
+      Serial.println("UI Amount " + String(_relay + 1) + " Set activated");
     #endif
+    _new_amount_selected = Relay::get_amount(_relay);
     adjust_lcd_state(_new_amount_selected);
 }
 void UI_Amount_Set::handle_button_press() { 
     #ifdef DEBUG
-      Serial.println("UI Amount " + String(_relay) + " Set:  setting new amount to "+ String(_new_amount_selected));
+      Serial.println("UI Amount " + String(_relay + 1) + " Set:  setting new amount to "+ String(_new_amount_selected));
     #endif
     Relay::set_amount(_new_amount_selected, _relay);
     Machine::changeState(static_cast<UI_State *>(new UI_Amount(_relay)));
@@ -305,9 +317,11 @@ void UI_Test::activate() {
 
 void UI_Test::handle_button_long_press() {
     LCD_Wrapper::display("  < TEST >  ","Oh Yeah Baby!");
+    Relay::testing(true);
     Relay::turn_on();
 }
 void UI_Test::handle_button_long_release() {
+    Relay::testing(false);
     Relay::turn_off();
     Machine::changeState(static_cast<UI_State *>(new UI_Test()));
 }
@@ -318,6 +332,14 @@ void UI_Test::handle_rotation(int delta) {
     } else {
         Machine::changeState(static_cast<UI_State *>(new UI_Amount(NUM_PUMPS - 1)));
     }
+}
+
+//block inactive from being called by base class udpate
+void UI_Test::update() {}
+
+// turn off before exiting state
+UI_Test::~UI_Test() {
+    Relay::turn_off();
 }
 
 

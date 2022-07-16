@@ -7,11 +7,12 @@
 #define DEBUG
 
 REWrapper::REWrapper(Encoder* enc) {
-    first_push = 0UL;
-    prev_RE_button = false;
-    rot_buffer = 0;
-    last_rot = 0UL;
-    encoder = enc;
+    _first_push = 0UL;
+    _long_press = false;
+    _long_press_sent = false;
+    _rot_buffer = 0;
+    _last_rot = 0UL;
+    _encoder = enc;
 }
 
 
@@ -20,54 +21,62 @@ void REWrapper::update() {
 
     // do this even if we ignore to prevent buildup
     // read the debounced value of the encoder button
-    bool pb = encoder->button();
+    bool pb = _encoder->button();
     // get the encoder variation since our last check, it can be positive or negative, or zero if the encoder didn't move
     // only call this once per loop cicle, or at any time you want to know any incremental change
-    int delta = encoder->delta();
+    int delta = _encoder->delta();
 
     long unsigned now = millis();
 
 
     // button
-    if (pb && (now - first_push > push_cooldown)) {
-        first_push = now; 
-        #ifdef DEBUG
-            Serial.println("button press");
-        #endif
-        button_press();
-    }
-    // TODO:  maybe don't issue both down and long both?  but that induces lag
-    if (pb && (now - first_push > _long_press_delay)) {
-        first_push = now; 
-        _long_press = true;
-        #ifdef DEBUG
-            Serial.println("button long press");
-        #endif
-        button_long_press();
-    }
-    if(_long_press && (! pb) ) {
-        #ifdef DEBUG
-            Serial.println("button long release");
-        #endif
-        button_long_release();
+    if(_long_press) {
+        if (pb && !_long_press_sent && (now - _first_push > _long_press_delay)) {
+            #ifdef DEBUG
+                Serial.println("button long press");
+            #endif
+            // TODO:  maybe don't issue both down and long?  but that induces lag
+            button_long_press();
+            _long_press_sent = true;
+        }
+        if(! pb ) {
+            if(_long_press_sent) {
+                #ifdef DEBUG
+                    Serial.println("button long release");
+                #endif
+                button_long_release();
+            _long_press_sent = false;
+            _long_press = false;
+            }
+        }
+
+    } else {
+        if (pb && (now - _first_push > push_cooldown)) {
+            _first_push = now; 
+            #ifdef DEBUG
+                Serial.println("button press");
+            #endif
+            button_press();
+            _long_press = true;
+        }
     }
 
 
     // rotate
     if(delta != 0) {
-        rot_buffer -= delta;
-        last_rot = now;
+        _rot_buffer -= delta;
+        _last_rot = now;
         #ifdef DEBUG
-            Serial.println("rb = "+String(rot_buffer) +"   delta = "+String(delta));
+            Serial.println("rb = "+String(_rot_buffer) +"   delta = "+String(delta));
         #endif
     } 
-    unsigned long lr = last_rot;
+    unsigned long lr = _last_rot;
 
     
     // if its been more than rot_delay since last rotary action
     if (now > lr + rot_delay) {
-        int rb = rot_buffer;
-        rot_buffer = 0;
+        int rb = _rot_buffer;
+        _rot_buffer = 0;
         // some time has passed since the rotary did anything
         String dir = "Neutral";
         if (rb > 0) {

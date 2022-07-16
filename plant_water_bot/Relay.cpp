@@ -8,7 +8,9 @@
 
 #define DEBUG
 
+
 int Relay::_active = 0;
+bool Relay::_testing = false;
 int Relay::_amount[NUM_PUMPS] = {10,10};
 unsigned long Relay::_start_time = 0UL; 
 // for(int i=0; i < NUM_PUMPS; i++) {
@@ -18,7 +20,12 @@ void Relay::init() {
     for(int i=0; i < NUM_PUMPS; i++) {
         _amount[i] = Globals::amounts[0];
         pinMode(Globals::RELAY_PINS[i], OUTPUT); // low active
+        digitalWrite(Globals::RELAY_PINS[i], HIGH);
     }
+}
+
+void Relay::testing(bool t) {
+    _testing = t;
 }
 
 void Relay::turn_on() {
@@ -70,12 +77,14 @@ void Relay::activate() {
     #endif
     turn_on();
     _start_time = millis();
-    Machine::changeState(static_cast<UI_State *>(new UI_Watering()));
     // Note:  Do this after state transition to avoid the backlight call in changeState overriding this...
     LCD_Wrapper::backlight();
 }
 
 void Relay::update() {
+    if(_testing) {
+        return;
+    }
     unsigned long now = millis();
     bool finished = false;
     for(int i=0; i < NUM_PUMPS; i++) {
