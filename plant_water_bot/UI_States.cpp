@@ -299,7 +299,7 @@ void UI_Inactive::handle_rotation(int delta) {
 void UI_Inactive::update() {
     // Note:  because this doesn't explicitly call UI_State::update(), that method is overridden
     // and not invoked from here, so we don't have to worry about constantly changing to Inactive
-    unsigned long lcd_turnoff_delay = 1000UL;
+    unsigned long lcd_turnoff_delay = 3000UL;
     if( millis() - _start > lcd_turnoff_delay) {
         LCD_Wrapper::backlightOff();
     }

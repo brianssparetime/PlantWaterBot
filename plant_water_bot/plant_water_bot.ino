@@ -12,7 +12,7 @@
 
 
 //comment out later for smoother running
-#define DEBUG
+//#define DEBUG
 
 /*
 

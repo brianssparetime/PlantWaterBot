@@ -31,13 +31,18 @@ void REWrapper::update() {
 
     // button
     if(_long_press) {
-        if (pb && !_long_press_sent && (now - _first_push > _long_press_delay)) {
-            #ifdef DEBUG
-                Serial.println("button long press");
-            #endif
-            // TODO:  maybe don't issue both down and long?  but that induces lag
-            button_long_press();
-            _long_press_sent = true;
+        if (!_long_press_sent && (now - _first_push > _long_press_delay)) {
+            if(pb) {
+                #ifdef DEBUG
+                    Serial.println("button long press");
+                #endif
+                // TODO:  maybe don't issue both down and long?  but that induces lag
+                button_long_press();
+                _long_press_sent = true;
+            } else {
+                _long_press = false;
+
+            }
         }
         if(! pb ) {
             if(_long_press_sent) {
