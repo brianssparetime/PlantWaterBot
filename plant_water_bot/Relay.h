@@ -22,7 +22,7 @@ class Relay {
 
         static int _amount[NUM_PUMPS];
         static unsigned long _start_time;
-        static int _active;
+        static uint8_t _active;
         static bool _testing;
 
 };

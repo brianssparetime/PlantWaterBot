@@ -22,11 +22,12 @@
 
 
 namespace Globals {
+    // TODO: consider moving to progmem, rewriting next_left next_right to work off that
     static const int amounts[5] = {10, 25, 50, 100, 200}; // hours
-    static const int amounts_size = 5;
+    static const int8_t amounts_size = 5;
 
     static const int intervals[5] = {8, 12, 24, 48, 72}; // hours
-    static const int intervals_size = 5;
+    static const int8_t intervals_size = 5;
 
-    static const int RELAY_PINS[NUM_PUMPS] = {A0, A1};
+    static const uint8_t RELAY_PINS[NUM_PUMPS] = {A0, A1};
 }

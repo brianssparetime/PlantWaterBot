@@ -206,14 +206,14 @@ void EncoderInterruptClass::begin( Encoder **encoderRefs, int numEncoders)
 {
    _encoderArray = encoderRefs;
    _numEncoders = numEncoders;
-   for ( int i=0 ; i<_numEncoders ; i++ ) _encoderArray[i]->init();
+   for ( uint8_t i=0 ; i<_numEncoders ; i++ ) _encoderArray[i]->init();
 
    setupTimerInterrupt();
 }
 
 void EncoderInterruptClass::computeAll()
 {
-  for ( int i=0 ; i<_numEncoders ; i++ )
+  for ( uint8_t i=0 ; i<_numEncoders ; i++ )
   {
     _encoderArray[i]->compute();
   }

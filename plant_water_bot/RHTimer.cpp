@@ -25,7 +25,7 @@ void RHTimer::start() {
 }
 
 void RHTimer::start(int interval) {
-    _cur_interval = interval;
+    _cur_interval = interval; // hours
     start();
 }
 

@@ -40,7 +40,7 @@ static int UI_State_Setter::next_left(int current, int arr[], int arr_size) {
     // on match, return holder, which is either previous 
     // or if i=0, then return holder (which is already set to the last)
     int p = arr[arr_size - 1];
-    for (int i = 0; i < arr_size; i++) {
+    for (uint8_t i = 0; i < arr_size; i++) {
         int x = arr[i];
         if(x == current) {
             return p;
@@ -55,7 +55,7 @@ static int UI_State_Setter::next_right(int current, int arr[], int arr_size) {
         return arr[0];
     }
     // otherwise, start from begining, go until second to last, and return next after match
-    for (int i = 0; i < arr_size - 1; i++) {
+    for (uint8_t i = 0; i < arr_size - 1; i++) {
         int x = arr[i];
         if(x == current) {
             return arr[i+1];

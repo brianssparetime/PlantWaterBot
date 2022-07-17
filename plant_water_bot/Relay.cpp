@@ -9,15 +9,14 @@
 #define DEBUG
 
 
-int Relay::_active = 0;
+uint8_t Relay::_active = 0;
 bool Relay::_testing = false;
 int Relay::_amount[NUM_PUMPS] = {10,10};
 unsigned long Relay::_start_time = 0UL; 
-// for(int i=0; i < NUM_PUMPS; i++) {
-//     int Relay::amount[i] = Globals::amounts[0];
-// }
+
 void Relay::init() {
-    for(int i=0; i < NUM_PUMPS; i++) {
+    for(uint8_t i=0; i < NUM_PUMPS; i++) {
+        //_amount[i] = Globals::amounts[0];
         _amount[i] = Globals::amounts[0];
         pinMode(Globals::RELAY_PINS[i], OUTPUT); // low active
         digitalWrite(Globals::RELAY_PINS[i], HIGH);
@@ -32,14 +31,14 @@ void Relay::turn_on() {
     #ifdef DEBUG
       Serial.println("relays on");
     #endif
-    for(int i = 0; i < NUM_PUMPS; i++) {
+    for(uint8_t i = 0; i < NUM_PUMPS; i++) {
         digitalWrite(Globals::RELAY_PINS[i], LOW);
         _active++;
     }
 }
 
 void Relay::turn_off() {
-    for(int i = 0; i < NUM_PUMPS; i++) {
+    for(uint8_t i = 0; i < NUM_PUMPS; i++) {
         turn_off(i);
     }
 }
@@ -53,7 +52,7 @@ void Relay::turn_off(int relay) {
 }
 
 unsigned long Relay::amount_to_duration(int amount) {
-    const int flowrate = 3; // ml per sec
+    const int8_t flowrate = 3; // ml per sec
     // (ml / (ml/s) ) * ms/s
     return ((unsigned long) amount * 1000UL / (unsigned long) flowrate);
 }
@@ -87,7 +86,7 @@ void Relay::update() {
     }
     unsigned long now = millis();
     bool finished = false;
-    for(int i=0; i < NUM_PUMPS; i++) {
+    for(uint8_t i=0; i < NUM_PUMPS; i++) {
         if(_active && (now > _start_time + amount_to_duration(_amount[i]))) {
             #ifdef DEBUG
                 Serial.println("relay " + String(i+1) + " update - deactivating...");
