@@ -143,6 +143,14 @@ void UI_Interval_Set::handle_button_press() {
     Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 
+void UI_Interval_Set::handle_button_long_press() {
+    #ifdef DEBUG
+      Serial.println("UI Interval Set long press:  new interval set to " + String(0));
+    #endif
+    RHTimer::start(0);
+    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+}
+
 void UI_Interval_Set::handle_rotation(int delta) {
     if(delta > 0) {
         _new_interval_selected = UI_State_Setter::next_right( \
