@@ -37,7 +37,9 @@ int RHTimer::get_m_remaining() {
     return 60 - _minutes_elapsed - 1;
 }
 
-
+int RHTimer::get_s_remaining() {
+    return (_next_min_millis - millis()) / 1000UL;
+}
 
 
 void RHTimer::update() {

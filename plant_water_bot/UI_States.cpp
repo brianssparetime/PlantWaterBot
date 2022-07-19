@@ -272,10 +272,12 @@ void UI_Amount_Set::adjust_lcd_state(int intv) {
 /*********** UI_Inactive *************/
 
 static void UI_Inactive::get_time_left(char* sb) {
-    int ci = RHTimer::get_current_interval();
-    int h_left = RHTimer::get_h_remaining();
-    int m_left = RHTimer::get_m_remaining();
-    sprintf(sb, " %02dh%02dm / %02dh", h_left, m_left, ci);
+    sprintf(sb, "%02dh%02dm%02ds / %02dh", \
+        RHTimer::get_h_remaining(),
+        RHTimer::get_m_remaining(),
+        RHTimer::get_s_remaining(),
+        RHTimer::get_current_interval()
+    );
     return sb;
 }
 

@@ -54,7 +54,6 @@ void REWrapper::update() {
             _long_press = false;
             }
         }
-
     } else {
         if (pb && (now - _first_push > push_cooldown)) {
             _first_push = now; 
@@ -66,6 +65,12 @@ void REWrapper::update() {
         }
     }
 
+    // deaden rotation around button pressing:
+    if(pb) {
+        _last_rot = now;
+        _rot_buffer = 0;
+
+    }
 
     // rotate
     if(delta != 0) {
@@ -75,11 +80,10 @@ void REWrapper::update() {
             Serial.println("rb = "+String(_rot_buffer) +"   delta = "+String(delta));
         #endif
     } 
-    unsigned long lr = _last_rot;
 
     
     // if its been more than rot_delay since last rotary action
-    if (now > lr + rot_delay) {
+    if (now > _last_rot + rot_delay) {
         int rb = _rot_buffer;
         _rot_buffer = 0;
         // some time has passed since the rotary did anything

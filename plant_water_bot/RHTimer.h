@@ -9,6 +9,7 @@ class RHTimer {
         static void start(int interval);
         static int get_h_remaining();
         static int get_m_remaining();
+        static int get_s_remaining();
         static void update();
         static int get_current_interval();
 
