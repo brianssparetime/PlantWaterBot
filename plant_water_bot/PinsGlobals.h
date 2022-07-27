@@ -30,4 +30,6 @@ namespace Globals {
     static const int8_t intervals_size = 5;
 
     static const uint8_t RELAY_PINS[NUM_PUMPS] = {A0, A1};
+    static const float flowrate = 3.6; // ml per sec
+
 }

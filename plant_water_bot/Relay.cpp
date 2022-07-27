@@ -52,9 +52,8 @@ void Relay::turn_off(int relay) {
 }
 
 unsigned long Relay::amount_to_duration(int amount) {
-    const int8_t flowrate = 3; // ml per sec
     // (ml / (ml/s) ) * ms/s
-    return ((unsigned long) amount * 1000UL / (unsigned long) flowrate);
+    return (unsigned long) ((unsigned long) amount * 1000UL / Globals::flowrate);
 }
 
 void Relay::set_amount(int amt, int relay) {
