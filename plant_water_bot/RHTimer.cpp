@@ -30,11 +30,19 @@ void RHTimer::start(int interval) {
 }
 
 int RHTimer::get_h_remaining() {
-    return _cur_interval - _hours_elapsed - 1;
+    if(_cur_interval > 0) {
+        return _cur_interval - _hours_elapsed - 1;
+    } else {
+        return 0;
+    }
 }
 
 int RHTimer::get_m_remaining() {
-    return 60 - _minutes_elapsed - 1;
+    if(_cur_interval > 0) { 
+        return 60 - _minutes_elapsed - 1;
+    } else {
+        return 0;
+    }
 }
 
 int RHTimer::get_s_remaining() {

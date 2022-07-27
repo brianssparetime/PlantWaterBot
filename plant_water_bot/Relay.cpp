@@ -94,7 +94,9 @@ void Relay::update() {
             turn_off(i);
             if(_active == 0) {
                 RHTimer::start();
-                Serial.println("restarting timer...");
+                #ifdef DEBUG
+                    Serial.println("restarting timer...");
+                #endif
                 Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
             }
         }
