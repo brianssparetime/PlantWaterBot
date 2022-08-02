@@ -19,8 +19,8 @@ class UI_State {
 
 class UI_State_Setter {
     public:
-        static int next_left(int current, int arr[], int arr_size);
-        static int next_right(int current, int arr[], int arr_size);
+        static int next_left(int current, uint8_t arr[], uint8_t arr_size);
+        static int next_right(int current, uint8_t arr[], uint8_t arr_size);
 };
 
 class UI_Welcome : public UI_State {
@@ -54,7 +54,7 @@ class UI_Interval_Set : public UI_State, public UI_State_Setter {
         virtual void handle_rotation(int delta);
     private:
         int _new_interval_selected;
-        void adjust_lcd_state(int intv);
+        void adjust_lcd_state(uint8_t intv);
     
 };
 
@@ -94,7 +94,7 @@ class UI_Amount_Set : public UI_State, public UI_State_Setter {
 
     private:
         int _new_amount_selected;
-        void adjust_lcd_state(int intv);
+        void adjust_lcd_state(uint8_t intv);
         int _relay;
     
 };

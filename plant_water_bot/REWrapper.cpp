@@ -75,7 +75,6 @@ void REWrapper::update() {
     // rotate
     if(delta != 0) {
         _rot_buffer -= delta;
-        _last_rot = now;
         #ifdef DEBUG
             Serial.println("rb = "+String(_rot_buffer) +"   delta = "+String(delta));
         #endif
@@ -84,6 +83,7 @@ void REWrapper::update() {
     
     // if its been more than rot_delay since last rotary action
     if (now > _last_rot + rot_delay) {
+        _last_rot = now;
         int rb = _rot_buffer;
         _rot_buffer = 0;
         // some time has passed since the rotary did anything

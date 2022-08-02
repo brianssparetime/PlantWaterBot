@@ -35,7 +35,7 @@ void UI_State::handle_rotation(int delta) { }
 /*********** UI_State_Setter *************/
 
 
-static int UI_State_Setter::next_left(int current, int arr[], int arr_size) {
+static int UI_State_Setter::next_left(int current, uint8_t arr[], uint8_t arr_size) {
     
     // on match, return holder, which is either previous 
     // or if i=0, then return holder (which is already set to the last)
@@ -49,7 +49,7 @@ static int UI_State_Setter::next_left(int current, int arr[], int arr_size) {
     }
 }
 
-static int UI_State_Setter::next_right(int current, int arr[], int arr_size) {
+static int UI_State_Setter::next_right(int current, uint8_t arr[], uint8_t arr_size) {
     // if we're currently at the last position, return first one
     if (arr[arr_size - 1] == current) {
         return arr[0];
@@ -120,9 +120,17 @@ void UI_Interval::handle_rotation(int delta) {
 /*********** UI_Interval_Set *************/
 
 
-void UI_Interval_Set::adjust_lcd_state(int intv) {
+void UI_Interval_Set::adjust_lcd_state(uint8_t intv) {
     char sb[17];
-    sprintf(sb, "< %02dH >", intv);
+    if(intv == 24) {
+        sprintf(sb, "< daily >", intv);
+    } else if (intv >= 24 && intv < 168) {
+        sprintf(sb, "< every %d days >", intv / 24 );
+    } else if (intv == 168) {
+        sprintf(sb, "< weekly >", intv / 168);
+    } else {
+        sprintf(sb, "< %02dH >", intv);
+    }
     LCD_Wrapper::display("  INTERVAL Set:", sb);
 }
 
@@ -268,9 +276,9 @@ void UI_Amount_Set::handle_rotation(int delta) {
 }
 
 // TODO:  perhaps implement this stuff in another inherited class
-void UI_Amount_Set::adjust_lcd_state(int intv) {
+void UI_Amount_Set::adjust_lcd_state(uint8_t intv) {
     char sba[17];
-    sprintf(sba, "  AMOUNT %d Set:", _relay);
+    sprintf(sba, "  AMOUNT %d Set:", _relay + 1);
     char sbb[17];
     sprintf(sbb, "< %d ml >", intv);
     LCD_Wrapper::display(sba, sbb);
@@ -280,7 +288,7 @@ void UI_Amount_Set::adjust_lcd_state(int intv) {
 /*********** UI_Inactive *************/
 
 static void UI_Inactive::get_time_left(char* sb) {
-    sprintf(sb, "%02dh%02dm%02ds / %02dh", \
+    sprintf(sb, "%dh%02dm%02ds / %02dh", \
         RHTimer::get_h_remaining(),
         RHTimer::get_m_remaining(),
         RHTimer::get_s_remaining(),
