@@ -23,11 +23,11 @@
 
 namespace Globals {
     // TODO: consider moving to progmem, rewriting next_left next_right to work off that
-    static const uint8_t amounts[5] = {20, 50, 100, 200}; // hours
     static const uint8_t amounts_size = 4;
+    static const uint8_t amounts[amounts_size] = {20, 50, 100, 200}; // hours
 
-    static const uint8_t intervals[5] = {24, 48, 72, 168}; // hours
     static const uint8_t intervals_size = 4;
+    static const uint8_t intervals[intervals_size] = {24, 48, 72, 168}; // hours
 
     static const uint8_t RELAY_PINS[NUM_PUMPS] = {A0, A1};
     static const float flowrate = 3.6; // ml per sec
