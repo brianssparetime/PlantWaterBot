@@ -8,11 +8,11 @@
 
 #define DEBUG
 
-int RHTimer::_minutes_elapsed = 0;
-int RHTimer::_hours_elapsed = 0;
+uint8_t RHTimer::_minutes_elapsed = 0;
+uint8_t RHTimer::_hours_elapsed = 0;
 unsigned long RHTimer::_next_min_millis = 0;
 
-int RHTimer::_cur_interval = Globals::intervals[0];
+uint8_t RHTimer::_cur_interval = Globals::intervals[0];
 
 void RHTimer::start() {
     unsigned long now = millis();
@@ -27,6 +27,10 @@ void RHTimer::start() {
 void RHTimer::start(int interval) {
     _cur_interval = interval; // hours
     start();
+}
+
+int RHTimer::get_d_remaining() {
+    return get_h_remaining() / 24;
 }
 
 int RHTimer::get_h_remaining() {

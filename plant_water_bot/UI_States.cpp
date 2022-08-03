@@ -124,7 +124,7 @@ void UI_Interval_Set::adjust_lcd_state(uint8_t intv) {
     char sb[17];
     if(intv == 24) {
         sprintf(sb, "< daily >", intv);
-    } else if (intv >= 24 && intv < 168) {
+    } else if (intv > 24 && intv < 168) {
         sprintf(sb, "< every %d days >", intv / 24 );
     } else if (intv == 168) {
         sprintf(sb, "< weekly >", intv / 168);
@@ -288,12 +288,16 @@ void UI_Amount_Set::adjust_lcd_state(uint8_t intv) {
 /*********** UI_Inactive *************/
 
 static void UI_Inactive::get_time_left(char* sb) {
-    sprintf(sb, "%dh%02dm%02ds / %02dh", \
-        RHTimer::get_h_remaining(),
-        RHTimer::get_m_remaining(),
-        RHTimer::get_s_remaining(),
-        RHTimer::get_current_interval()
-    );
+    int d = RHTimer::get_d_remaining();
+    int h = RHTimer::get_h_remaining();
+    int m = RHTimer::get_m_remaining();
+    int s = RHTimer::get_s_remaining();
+    int v = RHTimer::get_current_interval();
+    if(d > 0) {
+        sprintf(sb, "%dd%dh / %02dh", d, s, v);
+    } else {
+        sprintf(sb, "%dh%02dm%02ds / %02dh", h, m, s, v);
+    }
     return sb;
 }
 
