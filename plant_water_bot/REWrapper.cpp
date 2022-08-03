@@ -36,13 +36,10 @@ void REWrapper::update() {
                 #ifdef DEBUG
                     Serial.println("button long press");
                 #endif
-                // TODO:  maybe don't issue both down and long?  but that induces lag
                 button_long_press();
                 _long_press_sent = true;
-            } else {
-                _long_press = false;
-
-            }
+                return;
+            } 
         }
         if(! pb ) {
             if(_long_press_sent) {
@@ -50,18 +47,21 @@ void REWrapper::update() {
                     Serial.println("button long release");
                 #endif
                 button_long_release();
+            } else { // long enough to activate, but not long enough for long
+                #ifdef DEBUG
+                    Serial.println("button press");
+                #endif
+                button_press();
+            }
             _long_press_sent = false;
             _long_press = false;
-            }
+            return;
         }
     } else {
         if (pb && (now - _first_push > push_cooldown)) {
             _first_push = now; 
-            #ifdef DEBUG
-                Serial.println("button press");
-            #endif
-            button_press();
             _long_press = true;
+            return;
         }
     }
 
