@@ -217,7 +217,7 @@ UI_Watering::~UI_Watering() {
 /*********** UI_Amount *************/
 
 
-UI_Amount::UI_Amount(int relay) { 
+UI_Amount::UI_Amount(uint8_t relay) { 
     _relay = relay;
 }
 
@@ -257,7 +257,7 @@ void UI_Amount::handle_rotation(int delta) {
 /*********** UI_Amount_Set *************/
 
 
-UI_Amount_Set::UI_Amount_Set(int relay) {
+UI_Amount_Set::UI_Amount_Set(uint8_t relay) {
     _new_amount_selected = Relay::get_amount(_relay);
     _relay = relay;
 }
@@ -346,7 +346,6 @@ void UI_Inactive::update() {
         LCD_Wrapper::backlightOff();
     }
     adjust_lcd_state();
-
 }
 
 /*********** UI_Test *************/

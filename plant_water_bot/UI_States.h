@@ -30,7 +30,7 @@ class UI_Welcome : public UI_State {
         virtual void handle_button_press();
         virtual void handle_rotation(int delta);
     private:
-        const int _duration = 4; // seconds
+        const uint8_t _duration = 4; // seconds
         unsigned long _start;
         
 
@@ -55,7 +55,7 @@ class UI_Interval_Set : public UI_State, public UI_State_Setter {
         virtual void handle_button_long_press();
         virtual void handle_rotation(int delta);
     private:
-        int _new_interval_selected;
+        uint8_t _new_interval_selected;
         void adjust_lcd_state(uint8_t intv);
     
 };
@@ -76,12 +76,12 @@ class UI_Watering : public UI_State {
 
 class UI_Amount : public UI_State {
     public:
-        UI_Amount(int relay);
+        UI_Amount(uint8_t relay);
         virtual void activate();
         virtual void handle_button_press();
         virtual void handle_rotation(int delta);
     private:
-        int _relay;
+        uint8_t _relay;
 
 
 };
@@ -89,15 +89,15 @@ class UI_Amount : public UI_State {
 
 class UI_Amount_Set : public UI_State, public UI_State_Setter {
     public:
-        UI_Amount_Set(int relay);
+        UI_Amount_Set(uint8_t relay);
         virtual void activate();
         virtual void handle_button_press();
         virtual void handle_rotation(int delta);
 
     private:
-        int _new_amount_selected;
+        uint8_t _new_amount_selected;
         void adjust_lcd_state(uint8_t intv);
-        int _relay;
+        uint8_t _relay;
     
 };
 

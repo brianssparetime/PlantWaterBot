@@ -11,7 +11,7 @@
 
 uint8_t Relay::_active = 0;
 bool Relay::_testing = false;
-int Relay::_amount[NUM_PUMPS] = {10,10};
+uint8_t Relay::_amount[NUM_PUMPS] = {10,10};
 unsigned long Relay::_start_time = 0UL; 
 
 void Relay::init() {
@@ -43,7 +43,7 @@ void Relay::turn_off() {
     }
 }
 
-void Relay::turn_off(int relay) {
+void Relay::turn_off(uint8_t relay) {
     #ifdef DEBUG
       Serial.println("relay " + String(relay + 1) + " off");
     #endif
@@ -51,20 +51,20 @@ void Relay::turn_off(int relay) {
     _active--;
 }
 
-unsigned long Relay::amount_to_duration(int amount) {
+unsigned long Relay::amount_to_duration(uint8_t amount) {
     // (ml / (ml/s) ) * ms/s
     return (unsigned long) ((unsigned long) amount * 1000UL / Globals::flowrate);
 }
 
-void Relay::set_amount(int amt, int relay) {
+void Relay::set_amount(uint8_t amt, uint8_t relay) {
     _amount[relay] = amt;
 }
 
-int Relay::get_amount(int relay) {
+uint8_t Relay::get_amount(uint8_t relay) {
     return _amount[relay];
 }
 
-unsigned long Relay::get_duration(int relay) {
+unsigned long Relay::get_duration(uint8_t relay) {
     return amount_to_duration(_amount[relay]);
 
 }

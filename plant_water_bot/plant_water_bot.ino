@@ -25,10 +25,7 @@
 
 // --------- pins -----------       see PinsGlobals.h
 // rotary encoder
-const int RE_BUT = RE_BUT_PIN; // rotary encoder button  // NOTE:  library does pinmode pullup
-const int RE_A = RE_A_PIN; // rotary encoder motion
-const int RE_B = RE_B_PIN; // rotary encoder motion
-Encoder encoder(RE_A, RE_B, RE_BUT); // set up rotary encoder
+Encoder encoder(RE_A_PIN, RE_B_PIN, RE_BUT_PIN); // set up rotary encoder
 REWrapper rew = REWrapper( &encoder);
 
 
@@ -52,7 +49,6 @@ REWrapper rew = REWrapper( &encoder);
 
     // default states
     LCD_Wrapper::init(); // this must come up top!
-    LCD_Wrapper::backlight();
     Machine::init();
     Machine::changeState(new UI_Welcome());
     RHTimer::start();

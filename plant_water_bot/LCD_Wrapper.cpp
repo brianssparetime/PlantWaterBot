@@ -13,9 +13,6 @@ LiquidCrystal_I2C* LCD_Wrapper::_lcd = &lcd_actual;
 
 void LCD_Wrapper::init() {
     _lcd->init();
-    _lcd->backlight();
-    _lcd->setCursor(0,0); // col, row
-    _lcd->print("  PLANT BOT");
 }
 
 void LCD_Wrapper::backlight() {
