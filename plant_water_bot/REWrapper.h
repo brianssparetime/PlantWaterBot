@@ -22,7 +22,7 @@ class REWrapper {
         bool _long_press_sent;
         int _rot_buffer;
         unsigned long _last_rot;
-        const unsigned long rot_delay = 300UL; // ms
+        const unsigned long rot_delay = 500UL; // ms
         const unsigned long _long_press_delay = 500UL; //ms
         Encoder* _encoder;
 
