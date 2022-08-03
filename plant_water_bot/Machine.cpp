@@ -21,6 +21,7 @@ void Machine::changeState(UI_State* new_state) {
     _instance->_current_state = new_state;
     delete old_state; 
     LCD_Wrapper::backlight();
+    _last_action = millis();
     _instance->_current_state->activate();
 }
 

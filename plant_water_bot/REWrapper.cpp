@@ -72,6 +72,7 @@ void REWrapper::update() {
 
     }
 
+    // TODO:  consider changing this to avoid jumpiness in rotation
     // rotate
     if(delta != 0) {
         _rot_buffer -= delta;
@@ -84,23 +85,22 @@ void REWrapper::update() {
     // if its been more than rot_delay since last rotary action
     if (now > _last_rot + rot_delay) {
         _last_rot = now;
-        int rb = _rot_buffer;
-        _rot_buffer = 0;
         // some time has passed since the rotary did anything
         String dir = "Neutral";
-        if (rb > 0) {
+        if (_rot_buffer > 0) {
             #ifdef DEBUG
                 dir = "Right  ";
-                Serial.println(dir + ":  rb = "+String(rb) );
+                Serial.println(dir + ":  rb = "+String(_rot_buffer) );
             #endif
-            rotation(rb);
-        } else if (rb < 0) {
+            rotation(_rot_buffer);
+        } else if (_rot_buffer < 0) {
             #ifdef DEBUG
                 dir = "Left   ";
-                Serial.println(dir + ":  rb = "+String(rb) );
+                Serial.println(dir + ":  rb = "+String(_rot_buffer) );
             #endif
-            rotation(rb);
+            rotation(_rot_buffer);
         }
+        _rot_buffer = 0;
     } 
 
 }

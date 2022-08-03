@@ -59,6 +59,13 @@ void RHTimer::update() {
     if(millis() > _next_min_millis) {
         // NOTE:  when millis() overflows and loops back to zero, we'll just wind up
         // adding an extra minute because this will fire immediately.
+
+        if(_cur_interval == 0) { // testing mode
+            alarm();
+            start(Globals::intervals[0]);
+            return;
+        }
+
         _minutes_elapsed++;
         _next_min_millis = millis() + 60UL * 1000UL; // milliseconds to min
         #ifdef DEBUG
@@ -95,5 +102,5 @@ void RHTimer::alarm() {
     #ifdef DEBUG
         Serial.println("==========ALARM=================="); 
     #endif DEBUG
-    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+    Machine::changeState(static_cast<UI_State *>(new UI_Watering()));
 }

@@ -41,8 +41,10 @@ class UI_Interval : public UI_State {
         virtual void activate();
         virtual void handle_button_press();
         virtual void handle_rotation(int delta);
-
-
+        virtual void update();
+    private:
+        void adjust_lcd_state();
+        uint8_t _lsd;
 };
 
 
@@ -105,10 +107,12 @@ class UI_Inactive : public UI_State {
         virtual void activate();
         virtual void handle_button_press();
         virtual void handle_rotation(int delta);
-        static void get_time_left(char* sb);
+        static uint8_t get_time_left(char* sb);
         virtual void update();
     private:
+        void adjust_lcd_state();
         unsigned long _start;
+        uint8_t _lsd;
 };
 
 class UI_Test : public UI_State {

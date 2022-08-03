@@ -95,14 +95,20 @@ void UI_Welcome::update() {
 
 /*********** UI_Interval *************/
 
+void UI_Interval::adjust_lcd_state() {
+    char sb[17];
+    uint8_t lsd = UI_Inactive::get_time_left(sb);
+    if(lsd != _lsd) {
+        LCD_Wrapper::display("< INTERVAL >", sb);
+        _lsd = lsd;
+    }
+}
 
 void UI_Interval::activate() {
     #ifdef DEBUG
       Serial.println("UI Interval activated");
     #endif
-    char sb[17];
-    UI_Inactive::get_time_left(sb);
-    LCD_Wrapper::display("< INTERVAL >", sb);
+    adjust_lcd_state();
 }
 void UI_Interval::handle_button_press() {
     Machine::changeState(static_cast<UI_State *>(new UI_Interval_Set()));
@@ -114,6 +120,11 @@ void UI_Interval::handle_rotation(int delta) {
     } else {
         Machine::changeState(static_cast<UI_State *>(new UI_Test()));
     }
+}
+
+void UI_Interval::update() {
+    adjust_lcd_state();
+    UI_State::update();
 }
 
 
@@ -287,16 +298,28 @@ void UI_Amount_Set::adjust_lcd_state(uint8_t intv) {
 
 /*********** UI_Inactive *************/
 
-static void UI_Inactive::get_time_left(char* sb) {
-    int d = RHTimer::get_d_remaining();
-    int h = RHTimer::get_h_remaining();
-    int m = RHTimer::get_m_remaining();
-    int s = RHTimer::get_s_remaining();
-    int v = RHTimer::get_current_interval();
+static uint8_t UI_Inactive::get_time_left(char* sb) {
+    uint8_t d = RHTimer::get_d_remaining();
+    uint8_t h = RHTimer::get_h_remaining();
+    uint8_t m = RHTimer::get_m_remaining();
+    uint8_t s = RHTimer::get_s_remaining();
+    uint8_t v = RHTimer::get_current_interval();
     if(d > 0) {
         sprintf(sb, "%dd%dh / %02dh", d, s, v);
+        return h;
     } else {
         sprintf(sb, "%dh%02dm%02ds / %02dh", h, m, s, v);
+        return s;
+    }
+}
+
+void UI_Inactive::adjust_lcd_state() {
+    char sb[17];
+    uint8_t lsd = UI_Inactive::get_time_left(sb);
+    if(lsd != _lsd) {
+        UI_Inactive::get_time_left(sb);
+        LCD_Wrapper::display("   PlantBot     ", sb);
+        _lsd = lsd;
     }
 }
 
@@ -305,9 +328,7 @@ void UI_Inactive::activate() {
       Serial.println("UI Inactive activated");
     #endif
     _start = millis();
-    char sb[17];
-    UI_Inactive::get_time_left(sb);
-    LCD_Wrapper::display("   PlantBot     ", sb);
+    adjust_lcd_state();
 }
 
 void UI_Inactive::handle_button_press() {
@@ -324,6 +345,7 @@ void UI_Inactive::update() {
     if( millis() - _start > lcd_turnoff_delay) {
         LCD_Wrapper::backlightOff();
     }
+    adjust_lcd_state();
 
 }
 
