@@ -7,11 +7,10 @@
 #define DEBUG
 
 REWrapper::REWrapper(Encoder* enc) {
-    _first_push = 0UL;
+    _last_action = 0UL;
     _long_press = false;
     _long_press_sent = false;
     _rot_buffer = 0;
-    _last_rot = 0UL;
     _encoder = enc;
 }
 
@@ -31,7 +30,7 @@ void REWrapper::update() {
 
     // button
     if(_long_press) {
-        if (!_long_press_sent && (now - _first_push > _long_press_delay)) {
+        if (!_long_press_sent && (now - _last_action > _long_press_delay)) {
             if(pb) {
                 #ifdef DEBUG
                     Serial.println("button long press");
@@ -58,8 +57,8 @@ void REWrapper::update() {
             return;
         }
     } else {
-        if (pb && (now - _first_push > push_cooldown)) {
-            _first_push = now; 
+        if (pb && (now - _last_action > push_cooldown)) {
+            _last_action = now; 
             _long_press = true;
             return;
         }
@@ -67,7 +66,6 @@ void REWrapper::update() {
 
     // deaden rotation around button pressing:
     if(pb) {
-        _last_rot = now;
         _rot_buffer = 0;
 
     }
@@ -83,8 +81,8 @@ void REWrapper::update() {
 
     
     // if its been more than rot_delay since last rotary action
-    if (now > _last_rot + rot_delay) {
-        _last_rot = now;
+    if (now > _last_action + rot_delay) {
+        _last_action = now;
         // some time has passed since the rotary did anything
         String dir = "Neutral";
         if (_rot_buffer > 0) {

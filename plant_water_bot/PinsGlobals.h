@@ -25,6 +25,7 @@ namespace Globals {
     // TODO: consider moving to progmem, rewriting next_left next_right to work off that
     static const uint8_t amounts_size = 4;
     static const uint8_t amounts[amounts_size] = {20, 50, 100, 200}; // hours
+    //uint8_t maxes at 255
 
     static const uint8_t intervals_size = 4;
     static const uint8_t intervals[intervals_size] = {24, 48, 72, 168}; // hours

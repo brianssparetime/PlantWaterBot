@@ -24,16 +24,16 @@ void RHTimer::start() {
     #endif DEBUG
 }
 
-void RHTimer::start(int interval) {
+void RHTimer::start(uint8_t interval) {
     _cur_interval = interval; // hours
     start();
 }
 
-int RHTimer::get_d_remaining() {
+uint8_t RHTimer::get_d_remaining() {
     return get_h_remaining() / 24;
 }
 
-int RHTimer::get_h_remaining() {
+uint8_t RHTimer::get_h_remaining() {
     if(_cur_interval > 0) {
         return _cur_interval - _hours_elapsed - 1;
     } else {
@@ -41,7 +41,7 @@ int RHTimer::get_h_remaining() {
     }
 }
 
-int RHTimer::get_m_remaining() {
+uint8_t RHTimer::get_m_remaining() {
     if(_cur_interval > 0) { 
         return 60 - _minutes_elapsed - 1;
     } else {
@@ -49,7 +49,7 @@ int RHTimer::get_m_remaining() {
     }
 }
 
-int RHTimer::get_s_remaining() {
+uint8_t RHTimer::get_s_remaining() {
     return (_next_min_millis - millis()) / 1000UL;
 }
 
@@ -93,7 +93,7 @@ void RHTimer::update() {
     }
 }
 
-int RHTimer::get_current_interval() {
+uint8_t RHTimer::get_current_interval() {
     return _cur_interval;
 }
 

@@ -16,14 +16,13 @@ class REWrapper {
         void button_long_release();
         void rotation(int delta);
         
-        unsigned long _first_push;
-        const unsigned long push_cooldown = 200UL; //ms
+        unsigned long _last_action;
+        const uint8_t push_cooldown = 200; //ms
         bool _long_press;
         bool _long_press_sent;
         int _rot_buffer;
-        unsigned long _last_rot;
-        const unsigned long rot_delay = 500UL; // ms
-        const unsigned long _long_press_delay = 500UL; //ms
+        const uint8_t rot_delay = 500; // ms
+        const uint8_t _long_press_delay = 500; //ms
         Encoder* _encoder;
 
 };

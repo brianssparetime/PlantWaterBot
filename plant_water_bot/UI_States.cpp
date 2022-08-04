@@ -190,16 +190,17 @@ void UI_Watering::activate() {
     #ifdef DEBUG
       Serial.println("UI Watering activated");
     #endif
-    this->_start = millis();
     LCD_Wrapper::display("    Slaking     ", "     Thirst!    ");
     Relay::activate();
 
 }
 
 void UI_Watering::handle_button_press() { 
+        Relay::turn_off();
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 void UI_Watering::handle_rotation(int delta) { 
+        Relay::turn_off();
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 

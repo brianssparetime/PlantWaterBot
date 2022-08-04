@@ -12,7 +12,8 @@ class UI_State {
         virtual void handle_button_long_release();
         virtual void handle_rotation(int delta);
     private:
-        static const unsigned long _inactive_timeout = 5UL * 1000UL; 
+        static const unsigned int _inactive_timeout = 5 * 1000; 
+        // unsigned int maxes at 65535
 
 };
 
@@ -67,10 +68,6 @@ class UI_Watering : public UI_State {
         virtual void handle_rotation(int delta);
         virtual void update();
         virtual ~UI_Watering();
-    private:
-        unsigned long _start;
-        
-
 };
 
 
