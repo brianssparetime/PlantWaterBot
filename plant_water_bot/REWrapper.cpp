@@ -25,20 +25,19 @@ void REWrapper::update() {
     // only call this once per loop cicle, or at any time you want to know any incremental change
     int delta = _encoder->delta();
 
-    long unsigned now = millis();
-
-
     // button
     if(_long_press) {
-        if (!_long_press_sent && (now - _last_action > _long_press_delay)) {
+        if (!_long_press_sent && (millis() - _last_action > _long_press_delay)) {
             if(pb) {
                 #ifdef DEBUG
                     Serial.println("button long press");
                 #endif
                 button_long_press();
                 _long_press_sent = true;
+                _rot_buffer = 0;
                 return;
             } 
+            _rot_buffer = 0;
         }
         if(! pb ) {
             if(_long_press_sent) {
@@ -54,21 +53,19 @@ void REWrapper::update() {
             }
             _long_press_sent = false;
             _long_press = false;
+            _last_action = millis(); 
+            _rot_buffer = 0;
             return;
         }
     } else {
-        if (pb && (now - _last_action > push_cooldown)) {
-            _last_action = now; 
+        if (pb && (millis() - _last_action > push_cooldown)) {
+            _last_action = millis(); 
             _long_press = true;
+            _rot_buffer = 0;
             return;
         }
     }
 
-    // deaden rotation around button pressing:
-    if(pb) {
-        _rot_buffer = 0;
-
-    }
 
     // TODO:  consider changing this to avoid jumpiness in rotation
     // rotate
@@ -81,8 +78,7 @@ void REWrapper::update() {
 
     
     // if its been more than rot_delay since last rotary action
-    if (now > _last_action + rot_delay) {
-        _last_action = now;
+    if (millis() > _last_action + rot_delay) {
         // some time has passed since the rotary did anything
         if (_rot_buffer > 0) {
             #ifdef DEBUG
@@ -96,6 +92,7 @@ void REWrapper::update() {
             rotation(_rot_buffer);
         }
         _rot_buffer = 0;
+        _last_action = millis();
     } 
 
 }
