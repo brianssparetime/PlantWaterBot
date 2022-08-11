@@ -69,10 +69,10 @@ static int UI_State_Setter::next_right(int current, uint8_t arr[], uint8_t arr_s
 
 void UI_Welcome::activate() {
     #ifdef DEBUG
-      Serial.println("UI Welcome activated");
+      Serial.println(F("UI Welcome activated"));
     #endif
     _start = millis();
-    LCD_Wrapper::display("   PlantBot     ", "    active      ");
+    LCD_Wrapper::display(F("   PlantBot     "), F("    active      "));
 }
 
 void UI_Welcome::handle_button_press() {
@@ -99,7 +99,7 @@ void UI_Interval::adjust_lcd_state() {
     char sb[17];
     uint8_t lsd = UI_Inactive::get_time_left(sb);
     if(lsd != _lsd) {
-        LCD_Wrapper::display("< INTERVAL >", sb);
+        LCD_Wrapper::display(F("< INTERVAL >"), sb);
         _lsd = lsd;
     }
 }
@@ -134,15 +134,15 @@ void UI_Interval::update() {
 void UI_Interval_Set::adjust_lcd_state(uint8_t intv) {
     char sb[17];
     if(intv == 24) {
-        sprintf(sb, "< daily >", intv);
+        strncpy(sb, "< daily >", 16);
     } else if (intv > 24 && intv < 168) {
         sprintf(sb, "< every %d days >", intv / 24 );
     } else if (intv == 168) {
-        sprintf(sb, "< weekly >", intv / 168);
+        strncpy(sb, "< weekly >", 16);
     } else {
         sprintf(sb, "< %02dH >", intv);
     }
-    LCD_Wrapper::display("  INTERVAL Set:", sb);
+    LCD_Wrapper::display(F("  INTERVAL Set:"), sb);
 }
 
 void UI_Interval_Set::activate() {
@@ -190,7 +190,7 @@ void UI_Watering::activate() {
     #ifdef DEBUG
       Serial.println("UI Watering activated");
     #endif
-    LCD_Wrapper::display("    Slaking     ", "     Thirst!    ");
+    LCD_Wrapper::display(F("    Slaking     "), F("     Thirst!    "));
     Relay::activate();
 
 }
@@ -319,7 +319,7 @@ void UI_Inactive::adjust_lcd_state() {
     uint8_t lsd = UI_Inactive::get_time_left(sb);
     if(lsd != _lsd) {
         UI_Inactive::get_time_left(sb);
-        LCD_Wrapper::display("   PlantBot     ", sb);
+        LCD_Wrapper::display(F("   PlantBot     "), sb);
         _lsd = lsd;
     }
 }
@@ -355,11 +355,11 @@ void UI_Test::activate() {
     #ifdef DEBUG
       Serial.println("UI Test activated");
     #endif
-    LCD_Wrapper::display("  < TEST >  ","press and hold");
+    LCD_Wrapper::display(F("  < TEST >  "),F("press and hold"));
 }
 
 void UI_Test::handle_button_long_press() {
-    LCD_Wrapper::display("  < TEST >  ","Oh Yeah Baby!");
+    LCD_Wrapper::display(F("  < TEST >  "),F("Oh Yeah Baby!"));
     Relay::testing(true);
     Relay::turn_on();
 }
