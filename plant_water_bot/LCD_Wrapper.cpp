@@ -23,7 +23,7 @@ void LCD_Wrapper::backlightOff() {
     _lcd->noBacklight();
 }
 
-void LCD_Wrapper::display(String line1, String line2) {
+void LCD_Wrapper::display(char* line1, char* line2) {
     _lcd->clear();
     #ifdef DEBUG 
       if(line1.length() >= 16) {
@@ -37,6 +37,18 @@ void LCD_Wrapper::display(String line1, String line2) {
     _lcd->print(line1);
     _lcd->setCursor(0,1); // col, row)
     _lcd->print(line2);
+}
+void LCD_Wrapper::display(const __FlashStringHelper* line1, const __FlashStringHelper* line2) {
+  char sba[17];
+  char sbb[17];
+  strcpy_P(sba, (const char*) line1);
+  strcpy_P(sbb, (const char*) line2);
+  display((char *) sba, (char *) sbb);
+}
+void LCD_Wrapper::display(const __FlashStringHelper* line1, char* line2) {
+  char sb[17];
+  strcpy_P(sb, (const char*) line1);
+  display(line1, sb);
 }
 
 
