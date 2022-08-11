@@ -30,12 +30,16 @@ void RHTimer::start(uint8_t interval) {
 }
 
 uint8_t RHTimer::get_d_remaining() {
-    return get_h_remaining() / 24;
+    if(_cur_interval > 0) {
+        return (_cur_interval - _hours_elapsed - 1) / 24;
+    } else {
+        return 0;
+    }
 }
 
 uint8_t RHTimer::get_h_remaining() {
     if(_cur_interval > 0) {
-        return _cur_interval - _hours_elapsed - 1;
+        return (_cur_interval - _hours_elapsed - 1) % 24;
     } else {
         return 0;
     }

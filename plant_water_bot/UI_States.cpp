@@ -150,6 +150,9 @@ void UI_Interval_Set::activate() {
       Serial.println("UI Interval Set activated");
     #endif
     int ci = RHTimer::get_current_interval();
+    if(ci == 0) {
+        ci = Globals::intervals[0];
+    }
     adjust_lcd_state(ci);
     _new_interval_selected = ci;
 }
@@ -306,7 +309,7 @@ static uint8_t UI_Inactive::get_time_left(char* sb) {
     uint8_t s = RHTimer::get_s_remaining();
     uint8_t v = RHTimer::get_current_interval();
     if(d > 0) {
-        sprintf(sb, "%dd%dh / %02dh", d, s, v);
+        sprintf(sb, "%dd%dh / %02dh", d, h, v);
         return h;
     } else {
         sprintf(sb, "%dh%02dm%02ds / %02dh", h, m, s, v);
