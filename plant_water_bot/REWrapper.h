@@ -17,12 +17,15 @@ class REWrapper {
         void rotation(int delta);
         
         unsigned long _last_action;
-        const uint8_t push_cooldown = 200; //ms
+        const uint16_t push_cooldown = 200; //ms
         bool _long_press;
         bool _long_press_sent;
         int _rot_buffer;
-        const uint8_t rot_delay = 500; // ms
-        const uint8_t _long_press_delay = 500; //ms
+        const uint16_t rot_delay = 500; // ms
+        const uint16_t _long_press_delay = 500; //ms
         Encoder* _encoder;
+
+        // uint8_t is 0-255
+        // unsigned int is 0-65535
 
 };

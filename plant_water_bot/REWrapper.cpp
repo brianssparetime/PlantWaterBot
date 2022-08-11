@@ -84,17 +84,14 @@ void REWrapper::update() {
     if (now > _last_action + rot_delay) {
         _last_action = now;
         // some time has passed since the rotary did anything
-        String dir = "Neutral";
         if (_rot_buffer > 0) {
             #ifdef DEBUG
-                dir = "Right  ";
-                Serial.println(dir + ":  rb = "+String(_rot_buffer) );
+                Serial.println("Right :  rb = "+String(_rot_buffer) );
             #endif
             rotation(_rot_buffer);
         } else if (_rot_buffer < 0) {
             #ifdef DEBUG
-                dir = "Left   ";
-                Serial.println(dir + ":  rb = "+String(_rot_buffer) );
+                Serial.println("Left :  rb = "+String(_rot_buffer) );
             #endif
             rotation(_rot_buffer);
         }
