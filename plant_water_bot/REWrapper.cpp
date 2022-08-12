@@ -10,7 +10,6 @@ REWrapper::REWrapper(Encoder* enc) {
     _last_action = 0UL;
     _long_press = false;
     _long_press_sent = false;
-    _rot_buffer = 0;
     _encoder = enc;
 }
 
@@ -34,10 +33,8 @@ void REWrapper::update() {
                 #endif
                 button_long_press();
                 _long_press_sent = true;
-                _rot_buffer = 0;
                 return;
             } 
-            _rot_buffer = 0;
         }
         if(! pb ) {
             if(_long_press_sent) {
@@ -54,44 +51,34 @@ void REWrapper::update() {
             _long_press_sent = false;
             _long_press = false;
             _last_action = millis(); 
-            _rot_buffer = 0;
             return;
         }
     } else {
         if (pb && (millis() - _last_action > push_cooldown)) {
             _last_action = millis(); 
             _long_press = true;
-            _rot_buffer = 0;
             return;
         }
     }
 
 
-    // TODO:  consider changing this to avoid jumpiness in rotation
-    // rotate
-    if(delta != 0) {
-        _rot_buffer -= delta;
-        #ifdef DEBUG
-            Serial.println("rb = "+String(_rot_buffer) +"   delta = "+String(delta));
-        #endif
-    } 
-
-    
     // if its been more than rot_delay since last rotary action
     if (millis() > _last_action + rot_delay) {
         // some time has passed since the rotary did anything
-        if (_rot_buffer > 0) {
+        delta = - delta;
+        if (delta > 0) {
             #ifdef DEBUG
-                Serial.println("Right :  rb = "+String(_rot_buffer) );
+                Serial.println("Right :  rb = "+String(delta) );
             #endif
-            rotation(_rot_buffer);
-        } else if (_rot_buffer < 0) {
+            rotation(delta);
+        } else if (delta < 0) {
             #ifdef DEBUG
-                Serial.println("Left :  rb = "+String(_rot_buffer) );
+                Serial.println("Left :  rb = "+String(delta) );
             #endif
-            rotation(_rot_buffer);
+            rotation(delta);
+        } else {
+            return;
         }
-        _rot_buffer = 0;
         _last_action = millis();
     } 
 

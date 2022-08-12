@@ -20,7 +20,6 @@ class REWrapper {
         const uint16_t push_cooldown = 200; //ms
         bool _long_press;
         bool _long_press_sent;
-        int _rot_buffer;
         const uint16_t rot_delay = 500; // ms
         const uint16_t _long_press_delay = 500; //ms
         Encoder* _encoder;
