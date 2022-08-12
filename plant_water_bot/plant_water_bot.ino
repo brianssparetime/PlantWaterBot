@@ -139,7 +139,15 @@ REWrapper rew = REWrapper( &encoder);
     VSCode:
     https://stackoverflow.com/questions/61954481/intellisense-throws-include-errors-when-working-with-arduino-in-vs-code
 
-      
+
+    F() macro / storing strings in progmem / buffer copying
+    https://www.baldengineer.com/arduino-f-macro.html
+    https://forum.arduino.cc/t/how-do-i-format-an-f-macro-string/997992/21?page=2
+    https://stackoverflow.com/questions/69139334/how-can-i-use-flashstringhelper-in-a-function-which-takes-char
+
+
+
+
       USB Mini male plug pinout
       
       |_|     |_|
