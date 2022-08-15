@@ -3,7 +3,6 @@
 #include "UI_States.h"
 #include "LCD_Wrapper.h"
 
-#define DEBUG
 
 unsigned long Machine::_last_action = 0UL;
 
