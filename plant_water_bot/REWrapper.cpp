@@ -4,7 +4,6 @@
 #include "Arduino.h"
 #include "Machine.h"
 
-#define DEBUG
 
 REWrapper::REWrapper(Encoder* enc) {
     _last_action = 0UL;
