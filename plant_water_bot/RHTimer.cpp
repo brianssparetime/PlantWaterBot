@@ -6,7 +6,6 @@
 #include "Machine.h"
 #include "UI_States.h"
 
-#define DEBUG
 
 uint8_t RHTimer::_minutes_elapsed = 0;
 uint8_t RHTimer::_hours_elapsed = 0;

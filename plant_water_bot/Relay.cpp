@@ -6,7 +6,6 @@
 #include "Machine.h"
 #include "PinsGlobals.h"
 
-#define DEBUG
 
 
 uint8_t Relay::_active = 0;
