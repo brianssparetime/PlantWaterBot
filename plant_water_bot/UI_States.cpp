@@ -5,8 +5,10 @@
 #include "LCD_Wrapper.h"
 #include "RHTimer.h"
 #include "Relay.h"
+#ifdef BUZZER_FEATURE
+  #include "Buzzer.h"
+#endif
 
-#define DEBUG
 
 /*********** UI_State *************/
 
@@ -72,6 +74,9 @@ void UI_Welcome::activate() {
       Serial.println(F("UI Welcome activated"));
     #endif
     _start = millis();
+    #ifdef BUZZER_FEATURE
+        Buzzer::buzz(500);
+    #endif
     LCD_Wrapper::display(F("   PlantBot     "), F("    active      "));
 }
 
@@ -194,6 +199,9 @@ void UI_Watering::activate() {
       Serial.println("UI Watering activated");
     #endif
     LCD_Wrapper::display(F("    Slaking     "), F("     Thirst!    "));
+    #ifdef BUZZER_FEATURE
+      Buzzer::buzz(500);
+    #endif
     Relay::activate();
 
 }
@@ -363,6 +371,9 @@ void UI_Test::activate() {
 
 void UI_Test::handle_button_long_press() {
     LCD_Wrapper::display(F("  < TEST >  "),F("Oh Yeah Baby!"));
+    #ifdef BUZZER_FEATURE
+      Buzzer::buzz(500);
+    #endif
     Relay::testing(true);
     Relay::turn_on();
 }

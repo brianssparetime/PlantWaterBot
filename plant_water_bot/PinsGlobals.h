@@ -11,8 +11,13 @@
 #define RE_B_PIN 8
 
 //empty sensor, indicator
-#define LOW_SENSOR 5
-#define LOW_INDICATOR A1 // relay 2 on the pcb
+#define LOW_SENSOR_PIN 5
+#define LOW_INDICATOR_PIN A1 // relay 2 on the pcb
+
+//buzzer
+#define BUZZER_FEATURE
+#define BUZZER_PIN 9
+
 
 
 //relay

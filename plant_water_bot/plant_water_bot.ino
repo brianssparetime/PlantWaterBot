@@ -9,6 +9,9 @@
 #include "RHTimer.h"
 #include "REWrapper.h"
 #include "Relay.h"
+#ifdef BUZZER_FEATURE
+  #include "Buzzer.h"
+#endif
 
 
 //comment out later for smoother running
@@ -29,6 +32,7 @@ Encoder encoder(RE_A_PIN, RE_B_PIN, RE_BUT_PIN); // set up rotary encoder
 REWrapper rew = REWrapper( &encoder);
 
 
+
   /*     ----------    S E T U P     --------- */
 
 
@@ -38,6 +42,10 @@ REWrapper rew = REWrapper( &encoder);
     #ifdef DEBUG 
       Serial.begin(115200);
       Serial.println("PlantBot online");
+    #endif
+
+    #ifdef BUZZER_FEATURE
+      Buzzer::init(BUZZER_PIN);
     #endif
 
     // set up relay pins
@@ -55,6 +63,8 @@ REWrapper rew = REWrapper( &encoder);
     #ifdef DEBUG 
       Serial.println("finished setup");
     #endif 
+
+
   }
 
 
@@ -81,6 +91,9 @@ REWrapper rew = REWrapper( &encoder);
     Relay::update();
 
 
+    #ifdef BUZZER_FEATURE
+      Buzzer::update();
+    #endif
 
   } // end loop
 
