@@ -120,10 +120,22 @@ class UI_Test : public UI_State {
         virtual void handle_rotation(int delta);
         virtual void update();
         virtual ~UI_Test();
+    private:
+        bool _testing;
 };
 
-// TODO:  define and implement low/empty sensor states
 // TODO:  consider abstractifying the idea of a timer state, and a set/get state
 // TODO:  consider doing state transitions through some kind of look up table that would 
 //          replace the handle_ virtual functions with optional hooks?
 
+class UI_Low : public UI_State {
+    public:
+        virtual void activate();
+        virtual void handle_rotation(int delta);
+        virtual void handle_button_press();
+        virtual void update();
+    private:
+        bool _blink_state;
+        unsigned long _last_blink;
+        const uint16_t _blink_interval = 5000;
+};

@@ -2,6 +2,7 @@
 #include "Machine.h"
 #include "UI_States.h"
 #include "LCD_Wrapper.h"
+#include "buzzer.h"
 
 
 unsigned long Machine::_last_action = 0UL;
@@ -20,6 +21,7 @@ void Machine::changeState(UI_State* new_state) {
     _instance->_current_state = new_state;
     delete old_state; 
     LCD_Wrapper::backlight();
+    Buzzer::buzz(200);
     _last_action = millis();
     _instance->_current_state->activate();
 }

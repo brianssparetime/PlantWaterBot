@@ -11,11 +11,10 @@
 #define RE_B_PIN 8
 
 //empty sensor, indicator
-#define LOW_SENSOR_PIN 5
-#define LOW_INDICATOR_PIN A1 // relay 2 on the pcb
+//#define LOW_SENSOR_PIN 5
+//pinmode(LOW_SENSOR_PIN, INPUT);
 
 //buzzer
-#define BUZZER_FEATURE
 #define BUZZER_PIN 9
 
 
@@ -27,7 +26,6 @@
 
 
 namespace Globals {
-    // TODO: consider moving to progmem, rewriting next_left next_right to work off that
     static const uint8_t amounts_size = 4;
     static const uint8_t amounts[amounts_size] = {20, 50, 100, 200}; // hours
     //uint8_t maxes at 255

@@ -9,15 +9,14 @@ uint16_t Buzzer::_stop_time = 0;
 void Buzzer::init(int pin) {
     _pin = pin;
     _stop_time = 0;
+    pinMode(_pin, OUTPUT); // high active
+    digitalWrite(_pin, LOW);
 }
 
 void Buzzer::buzz() {
-    buzz(0);
+    buzz(_default_duration);
 }
 void Buzzer::buzz(uint16_t duration_ms) {
-    if(duration_ms == 0) {
-        duration_ms = _default_duration;
-    }
     _stop_time = millis() + duration_ms;
     digitalWrite(_pin, HIGH);
 }

@@ -5,9 +5,7 @@
 #include "LCD_Wrapper.h"
 #include "RHTimer.h"
 #include "Relay.h"
-#ifdef BUZZER_FEATURE
-  #include "Buzzer.h"
-#endif
+#include "Buzzer.h"
 
 
 /*********** UI_State *************/
@@ -74,9 +72,7 @@ void UI_Welcome::activate() {
       Serial.println(F("UI Welcome activated"));
     #endif
     _start = millis();
-    #ifdef BUZZER_FEATURE
-        Buzzer::buzz(500);
-    #endif
+    Buzzer::buzz(500);
     LCD_Wrapper::display(F("   PlantBot     "), F("    active      "));
 }
 
@@ -199,9 +195,7 @@ void UI_Watering::activate() {
       Serial.println("UI Watering activated");
     #endif
     LCD_Wrapper::display(F("    Slaking     "), F("     Thirst!    "));
-    #ifdef BUZZER_FEATURE
-      Buzzer::buzz(500);
-    #endif
+    Buzzer::buzz(500);
     Relay::activate();
 
 }
@@ -358,6 +352,12 @@ void UI_Inactive::update() {
         LCD_Wrapper::backlightOff();
     }
     adjust_lcd_state();
+
+    #ifdef LOW_SENSOR_PIN
+        if(digitalRead(LOW_SENSOR_PIN)) {
+            Machine::changeState(static_cast<UI_State *>(new UI_Low()));
+        }
+    #endif
 }
 
 /*********** UI_Test *************/
@@ -367,19 +367,20 @@ void UI_Test::activate() {
       Serial.println("UI Test activated");
     #endif
     LCD_Wrapper::display(F("  < TEST >  "),F("press and hold"));
+    _testing = false;
 }
 
 void UI_Test::handle_button_long_press() {
     LCD_Wrapper::display(F("  < TEST >  "),F("Oh Yeah Baby!"));
-    #ifdef BUZZER_FEATURE
-      Buzzer::buzz(500);
-    #endif
+    Buzzer::buzz(500);
     Relay::testing(true);
     Relay::turn_on();
+    _testing = true;
 }
 void UI_Test::handle_button_long_release() {
     Relay::testing(false);
     Relay::turn_off();
+    _testing = false;
     Machine::changeState(static_cast<UI_State *>(new UI_Test()));
 }
 
@@ -391,8 +392,11 @@ void UI_Test::handle_rotation(int delta) {
     }
 }
 
-//block inactive from being called by base class udpate
-void UI_Test::update() {}
+void UI_Test::update() {
+    if(!_testing) {
+        UI_State::update();
+    }
+}
 
 // turn off before exiting state
 UI_Test::~UI_Test() {
@@ -404,6 +408,45 @@ UI_Test::~UI_Test() {
 
 
 
-/*********** UI_Empty *************/
+/*********** UI_Low *************/
 
-// TODO:  consider not activating the relay if we sense empty/low.
+#ifdef LOW_SENSOR_PIN
+
+void UI_Low::activate() {
+    #ifdef DEBUG
+      Serial.println("UI Low activated");
+    #endif
+    LCD_Wrapper::display(F("   REPLENISH"),F("   WATER SUPPLY"));
+}
+
+void UI_Low::handle_button_press() {
+    Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+}
+
+void UI_Low::handle_rotation(int delta) { 
+    if(delta > 0) {
+        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+    } else {
+        Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+    }
+}
+
+//block inactive from being called by base class udpate
+void UI_Low::update() {
+    if (_last_blink > millis() + _blink_interval) {
+        _blink_state = !_blink_state;
+        if (_blink_state) {
+            LCD_Wrapper::backlight();
+        } else {
+            LCD_Wrapper::backlightOff();
+        }
+        _last_blink = millis();
+    }
+
+    // if sensor not indicating low, exit state
+    if(!digitalRead(LOW_SENSOR_PIN)) {
+        Machine::changeState(static_cast<UI_State *>(new UI_Inactive()));
+    }
+}
+#endif
+
