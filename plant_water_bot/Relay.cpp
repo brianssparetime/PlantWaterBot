@@ -32,7 +32,7 @@ void Relay::turn_on() {
     #endif
     _active = 0;
     for(uint8_t i = 0; i < NUM_PUMPS; i++) {
-        if (_amount[i] >= 0) {
+        if (_amount[i] > 0) {
             digitalWrite(Globals::RELAY_PINS[i], LOW);
             _active++;
         }
@@ -44,7 +44,7 @@ void Relay::turn_off_all() {
         turn_off(i);
     }
     _active = 0;
-    //_testing = false; -- do we need this?
+    //_testing = false; -- do we need this?  I don' think so
 }
 
 void Relay::turn_off(uint8_t relay) {
@@ -53,7 +53,11 @@ void Relay::turn_off(uint8_t relay) {
     #endif
     digitalWrite(Globals::RELAY_PINS[relay], HIGH);
     if (_amount[relay] != 0) {
-        _active > 0 ? _active-- : 0;
+        if(_active > 0) {
+            _active--;
+        } else {
+            _active = 0;
+        }
     }
 }
 
@@ -91,14 +95,20 @@ void Relay::update() {
     }
     unsigned long now = millis();
     for(uint8_t i=0; i < NUM_PUMPS; i++) {
+
+        // no need to turn off disabled pumps
         if (_amount[i] == 0) {
             continue;
         }
+
         if((_active > 0) && (now > _start_time + amount_to_duration(_amount[i]))) {
             #ifdef DEBUG
                 Serial.println("relay " + String(i+1) + " update - deactivating...");
             #endif
             turn_off(i);
+
+
+            // if this was the  last active pump....
             if(_active == 0) {
                 turn_off_all();
                 RHTimer::start();
