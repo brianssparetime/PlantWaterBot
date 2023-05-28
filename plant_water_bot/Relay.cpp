@@ -32,14 +32,14 @@ void Relay::turn_on() {
     #endif
     _active = 0;
     for(uint8_t i = 0; i < NUM_PUMPS; i++) {
-        if (_amount[i] != 0) {
+        if (_amount[i] >= 0) {
             digitalWrite(Globals::RELAY_PINS[i], LOW);
             _active++;
         }
     }
 }
 
-void Relay::turn_off() {
+void Relay::turn_off_all() {
     for(uint8_t i = 0; i < NUM_PUMPS; i++) {
         turn_off(i);
     }
@@ -100,7 +100,7 @@ void Relay::update() {
             #endif
             turn_off(i);
             if(_active == 0) {
-                turn_off();
+                turn_off_all();
                 RHTimer::start();
                 #ifdef DEBUG
                     Serial.println("restarting timer...");

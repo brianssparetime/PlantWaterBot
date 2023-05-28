@@ -65,9 +65,16 @@ void RHTimer::update() {
 
         if(_cur_interval == 0) { // testing mode
             alarm();
-            start(Globals::intervals[0]);
+            start(Globals::intervals[0]); // TODO:  testing mode effectivly erases your set interval
             return;
         }
+
+        // this is for testing so you don't have to wait to see whether watering works
+        #ifdef WARP_SPEED
+            alarm();
+            start(_cur_interval);
+            return;
+        #endif
 
         _minutes_elapsed++;
         _next_min_millis = millis() + 60UL * 1000UL; // milliseconds to min

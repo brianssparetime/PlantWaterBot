@@ -14,7 +14,7 @@ class Relay {
         static void testing(bool t);
         static void turn_on();
         static void turn_off(uint8_t relay);
-        static void turn_off();
+        static void turn_off_all();
 
     private:
         static unsigned long amount_to_duration(uint8_t amount);

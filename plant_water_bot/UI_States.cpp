@@ -203,11 +203,11 @@ void UI_Watering::activate() {
 }
 
 void UI_Watering::handle_button_press() { 
-        Relay::turn_off();
+        Relay::turn_off_all();
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 void UI_Watering::handle_rotation(int delta) { 
-        Relay::turn_off();
+        Relay::turn_off_all();
         Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
 }
 
@@ -216,7 +216,7 @@ void UI_Watering::update() {}
 
 // turn off before exiting state
 UI_Watering::~UI_Watering() {
-    Relay::turn_off();
+    Relay::turn_off_all();
 }
 
 
@@ -380,7 +380,7 @@ void UI_Test::handle_button_long_press() {
     Relay::turn_on();
 }
 void UI_Test::handle_button_long_release() {
-    Relay::turn_off();
+    Relay::turn_off_all();
     Machine::changeState(static_cast<UI_State *>(new UI_Test()));
     _testing = false;
     Relay::testing(false);
@@ -402,7 +402,7 @@ void UI_Test::update() {
 
 // turn off before exiting state
 UI_Test::~UI_Test() {
-    Relay::turn_off();
+    Relay::turn_off_all();
 }
 
 
