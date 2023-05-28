@@ -136,6 +136,8 @@ void UI_Interval_Set::adjust_lcd_state(uint8_t intv) {
     char sb[17];
     if(intv == 24) {
         strncpy(sb, "< daily >", 16);
+    } else if (intv == 1) {
+        sprintf(sb, "< hourly >", 16 );
     } else if (intv > 24 && intv < 168) {
         sprintf(sb, "< every %d days >", intv / 24 );
     } else if (intv == 168) {
@@ -371,17 +373,17 @@ void UI_Test::activate() {
 }
 
 void UI_Test::handle_button_long_press() {
-    LCD_Wrapper::display(F("  < TEST >  "),F("Oh Yeah Baby!"));
-    Buzzer::buzz(500);
-    Relay::testing(true);
-    Relay::turn_on();
     _testing = true;
+    LCD_Wrapper::display(F("  < TEST >  "),F("Oh Yeah Baby!"));
+    Relay::testing(true);
+    Buzzer::buzz(500);
+    Relay::turn_on();
 }
 void UI_Test::handle_button_long_release() {
-    Relay::testing(false);
     Relay::turn_off();
-    _testing = false;
     Machine::changeState(static_cast<UI_State *>(new UI_Test()));
+    _testing = false;
+    Relay::testing(false);
 }
 
 void UI_Test::handle_rotation(int delta) { 

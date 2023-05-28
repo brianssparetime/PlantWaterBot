@@ -9,7 +9,7 @@
 
 
 uint8_t Relay::_active = 0;
-bool Relay::_testing = false;
+bool Relay::_testing = false; // used by UI_States.cpp to prevent update from turning off...
 uint8_t Relay::_amount[NUM_PUMPS] = {10,10};
 unsigned long Relay::_start_time = 0UL; 
 
@@ -30,9 +30,12 @@ void Relay::turn_on() {
     #ifdef DEBUG
       Serial.println("relays on");
     #endif
+    _active = 0;
     for(uint8_t i = 0; i < NUM_PUMPS; i++) {
-        digitalWrite(Globals::RELAY_PINS[i], LOW);
-        _active++;
+        if (_amount[i] != 0) {
+            digitalWrite(Globals::RELAY_PINS[i], LOW);
+            _active++;
+        }
     }
 }
 
@@ -40,6 +43,8 @@ void Relay::turn_off() {
     for(uint8_t i = 0; i < NUM_PUMPS; i++) {
         turn_off(i);
     }
+    _active = 0;
+    //_testing = false; -- do we need this?
 }
 
 void Relay::turn_off(uint8_t relay) {
@@ -47,12 +52,14 @@ void Relay::turn_off(uint8_t relay) {
       Serial.println("relay " + String(relay + 1) + " off");
     #endif
     digitalWrite(Globals::RELAY_PINS[relay], HIGH);
-    _active--;
+    if (_amount[relay] != 0) {
+        _active > 0 ? _active-- : 0;
+    }
 }
 
 unsigned long Relay::amount_to_duration(uint8_t amount) {
     // (ml / (ml/s) ) * ms/s
-    return (unsigned long) ((unsigned long) amount * 1000UL / Globals::flowrate);
+    return (unsigned long) (((unsigned long) amount * 1000UL) / Globals::flowrate);
 }
 
 void Relay::set_amount(uint8_t amt, uint8_t relay) {
@@ -83,14 +90,17 @@ void Relay::update() {
         return;
     }
     unsigned long now = millis();
-    bool finished = false;
     for(uint8_t i=0; i < NUM_PUMPS; i++) {
-        if(_active && (now > _start_time + amount_to_duration(_amount[i]))) {
+        if (_amount[i] == 0) {
+            continue;
+        }
+        if((_active > 0) && (now > _start_time + amount_to_duration(_amount[i]))) {
             #ifdef DEBUG
                 Serial.println("relay " + String(i+1) + " update - deactivating...");
             #endif
             turn_off(i);
             if(_active == 0) {
+                turn_off();
                 RHTimer::start();
                 #ifdef DEBUG
                     Serial.println("restarting timer...");
