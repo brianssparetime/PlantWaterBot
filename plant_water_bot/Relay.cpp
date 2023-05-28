@@ -52,12 +52,8 @@ void Relay::turn_off(uint8_t relay) {
       Serial.println("relay " + String(relay + 1) + " off");
     #endif
     digitalWrite(Globals::RELAY_PINS[relay], HIGH);
-    if (_amount[relay] != 0) {
-        if(_active > 0) {
-            _active--;
-        } else {
-            _active = 0;
-        }
+    if (_amount[relay] > 0) {
+        if(_active > 0) { _active--; } else { _active = 0; }
     }
 }
 
@@ -101,6 +97,7 @@ void Relay::update() {
             continue;
         }
 
+        // if the pump is active and we've exceeded the amount by duration...
         if((_active > 0) && (now > _start_time + amount_to_duration(_amount[i]))) {
             #ifdef DEBUG
                 Serial.println("relay " + String(i+1) + " update - deactivating...");
@@ -108,7 +105,7 @@ void Relay::update() {
             turn_off(i);
 
 
-            // if this was the  last active pump....
+            // if this was the last active pump, restart timer and state change
             if(_active == 0) {
                 turn_off_all();
                 RHTimer::start();
