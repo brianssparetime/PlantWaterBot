@@ -5,6 +5,7 @@
 #include "RHTimer.h"
 #include "Machine.h"
 #include "PinsGlobals.h"
+#include "buzzer.h"
 
 
 
@@ -17,44 +18,14 @@ void Relay::init() {
     for(uint8_t i=0; i < NUM_PUMPS; i++) {
         //_amount[i] = Globals::amounts[0];
         _amount[i] = Globals::amounts[0];
+        _active = 0;
         pinMode(Globals::RELAY_PINS[i], OUTPUT); // low active
         digitalWrite(Globals::RELAY_PINS[i], HIGH);
     }
 }
 
-void Relay::testing(bool t) {
-    _testing = t;
-}
-
-void Relay::turn_on() {
-    #ifdef DEBUG
-      Serial.println("relays on");
-    #endif
-    _active = 0;
-    for(uint8_t i = 0; i < NUM_PUMPS; i++) {
-        if (_amount[i] > 0) {
-            digitalWrite(Globals::RELAY_PINS[i], LOW);
-            _active++;
-        }
-    }
-}
-
-void Relay::turn_off_all() {
-    for(uint8_t i = 0; i < NUM_PUMPS; i++) {
-        turn_off(i);
-    }
-    _active = 0;
-    //_testing = false; -- do we need this?  I don' think so
-}
-
-void Relay::turn_off(uint8_t relay) {
-    #ifdef DEBUG
-      Serial.println("relay " + String(relay + 1) + " off");
-    #endif
-    digitalWrite(Globals::RELAY_PINS[relay], HIGH);
-    if (_amount[relay] > 0) {
-        if(_active > 0) { _active--; } else { _active = 0; }
-    }
+void Relay::testing(bool t_mode) {
+    _testing = t_mode;
 }
 
 unsigned long Relay::amount_to_duration(uint8_t amount) {
@@ -85,10 +56,42 @@ void Relay::activate() {
     LCD_Wrapper::backlight();
 }
 
+void Relay::turn_on() {
+    #ifdef DEBUG
+      Serial.println("relays on");
+    #endif
+    _active = 0;
+    for(uint8_t i = 0; i < NUM_PUMPS; i++) {
+        if (_amount[i] > 0) {
+            digitalWrite(Globals::RELAY_PINS[i], LOW);
+            _active++;
+        }
+    }
+}
+
+void Relay::turn_off_all() {
+    for(uint8_t i = 0; i < NUM_PUMPS; i++) {
+        turn_off(i);
+    }
+    _active = 0;
+    //_testing = false; -- do we need this?  I don' think so
+}
+
+void Relay::turn_off(uint8_t relay) {
+    #ifdef DEBUG
+      Serial.println("relay " + String(relay + 1) + " off");
+    #endif
+    digitalWrite(Globals::RELAY_PINS[relay], HIGH);
+    if (_amount[relay] > 0) {
+        if(_active > 0) { _active--; } //else { _active = 0; }
+    }
+}
+
 void Relay::update() {
     if(_testing) {
         return;
     }
+
     unsigned long now = millis();
     for(uint8_t i=0; i < NUM_PUMPS; i++) {
 
@@ -102,17 +105,19 @@ void Relay::update() {
             #ifdef DEBUG
                 Serial.println("relay " + String(i+1) + " update - deactivating...");
             #endif
+            Buzzer::buzz(75);
             turn_off(i);
 
 
+            // check only immediately after stopping an active pump....
             // if this was the last active pump, restart timer and state change
             if(_active == 0) {
-                turn_off_all();
+                turn_off_all(); // just to be safe
                 RHTimer::start();
                 #ifdef DEBUG
                     Serial.println("restarting timer...");
                 #endif
-                Machine::changeState(static_cast<UI_State *>(new UI_Interval()));
+                Machine::changeState(static_cast<UI_State *>(new UI_Inactive()));
             }
         }
     }

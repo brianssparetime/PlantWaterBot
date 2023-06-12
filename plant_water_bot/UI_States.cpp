@@ -447,7 +447,7 @@ void UI_Low::update() {
 
     // if sensor not indicating low, exit state
     if(!digitalRead(LOW_SENSOR_PIN)) {
-        Machine::changeState(static_cast<UI_State *>(new UI_Inactive()));
+        Machine::changeState(static_cast<UI_State *>(new UI_Welcome()));
     }
 }
 #endif

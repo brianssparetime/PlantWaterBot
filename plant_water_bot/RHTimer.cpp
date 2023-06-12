@@ -6,6 +6,8 @@
 #include "Machine.h"
 #include "UI_States.h"
 
+// when uncommented, this causes watering activation each minute for rapid testing
+// #define WARP_SPEED
 
 uint8_t RHTimer::_minutes_elapsed = 0;
 uint8_t RHTimer::_hours_elapsed = 0;
@@ -58,18 +60,23 @@ uint8_t RHTimer::get_s_remaining() {
 
 
 void RHTimer::update() {
+
+    // TODO: 
+    // consider immediately returning if UIState == UI_Watering
+
+
     // if next_min_millis is in the past...
     if(millis() > _next_min_millis) {
         // NOTE:  when millis() overflows and loops back to zero, we'll just wind up
         // adding an extra minute because this will fire immediately.
 
-        if(_cur_interval == 0) { // testing mode
+        if(_cur_interval == 0) { // when in UI_Test
             alarm();
             start(Globals::intervals[0]); // TODO:  testing mode effectivly erases your set interval
             return;
         }
 
-        // this is for testing so you don't have to wait to see whether watering works
+        // this is for rapid testing (not UI_Test) so you don't have to wait to see whether watering works
         #ifdef WARP_SPEED
             alarm();
             start(_cur_interval);
@@ -97,7 +104,7 @@ void RHTimer::update() {
                     Serial.println("alarm tick");
                 #endif DEBUG
                 alarm();
-                start(_cur_interval);
+                start(_cur_interval); // TODO: this is duplicative of start() in Relay.cpp
             }
         }
     }

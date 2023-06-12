@@ -16,8 +16,6 @@
 //    but this causes some instability (possible memory issues)!
 //#define DEBUG
 
-// when uncommented, this causes watering activation each minute for rapid testing
-#define WARP_SPEED
 
 /*
 
