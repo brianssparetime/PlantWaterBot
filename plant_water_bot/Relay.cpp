@@ -15,13 +15,15 @@ uint8_t Relay::_amount[NUM_PUMPS] = {10,10};
 unsigned long Relay::_start_time = 0UL; 
 
 void Relay::init() {
+    _active = 0;
     for(uint8_t i=0; i < NUM_PUMPS; i++) {
         //_amount[i] = Globals::amounts[0];
         _amount[i] = Globals::amounts[0];
-        _active = 0;
         pinMode(Globals::RELAY_PINS[i], OUTPUT); // low active
         digitalWrite(Globals::RELAY_PINS[i], HIGH);
     }
+    // TESTING TODO REMOVE
+    _amount[1] = 100;
 }
 
 void Relay::testing(bool t_mode) {
@@ -30,7 +32,7 @@ void Relay::testing(bool t_mode) {
 
 unsigned long Relay::amount_to_duration(uint8_t amount) {
     // (ml / (ml/s) ) * ms/s
-    return (unsigned long) (((unsigned long) amount * 1000UL) / Globals::flowrate);
+    return (unsigned long) (((unsigned long) amount) / Globals::flowrate * 1000UL);
 }
 
 void Relay::set_amount(uint8_t amt, uint8_t relay) {
@@ -63,6 +65,9 @@ void Relay::turn_on() {
     _active = 0;
     for(uint8_t i = 0; i < NUM_PUMPS; i++) {
         if (_amount[i] > 0) {
+            char sb[30];
+            sprintf(sb, "relay %d on for amt %d", i+1, _amount[i]);
+            Serial.println(sb);
             digitalWrite(Globals::RELAY_PINS[i], LOW);
             _active++;
         }
@@ -70,6 +75,7 @@ void Relay::turn_on() {
 }
 
 void Relay::turn_off_all() {
+    Serial.println("turning off all relays");
     for(uint8_t i = 0; i < NUM_PUMPS; i++) {
         turn_off(i);
     }
@@ -78,19 +84,33 @@ void Relay::turn_off_all() {
 }
 
 void Relay::turn_off(uint8_t relay) {
-    #ifdef DEBUG
-      Serial.println("relay " + String(relay + 1) + " off");
-    #endif
+    // #ifdef DEBUG
+        char sb[20];
+        sprintf(sb, "relay %d turning off", relay+1);
+        Serial.println(sb);
+    // #endif
     digitalWrite(Globals::RELAY_PINS[relay], HIGH);
-    if (_amount[relay] > 0) {
-        if(_active > 0) { _active--; } //else { _active = 0; }
+    if (_amount[relay] > 0 && _active > 0) {
+        _active--;  
     }
 }
 
 void Relay::update() {
+    // don't try to turn off during testing
     if(_testing) {
         return;
     }
+
+    // if not active, there's nothing to check
+    if(_active == 0) {
+        return;
+    }
+
+    // #ifdef DEBUG
+    //     char sb[20];
+    //     sprintf(sb, "_active = %d", _active);
+    //     Serial.println(sb);
+    // #endif 
 
     unsigned long now = millis();
     for(uint8_t i=0; i < NUM_PUMPS; i++) {
@@ -101,10 +121,12 @@ void Relay::update() {
         }
 
         // if the pump is active and we've exceeded the amount by duration...
-        if((_active > 0) && (now > _start_time + amount_to_duration(_amount[i]))) {
-            #ifdef DEBUG
-                Serial.println("relay " + String(i+1) + " update - deactivating...");
-            #endif
+        if(now > _start_time + amount_to_duration(_amount[i])) {
+            // #ifdef DEBUG
+            char sb[30];
+            sprintf(sb, "relay %d exceeded time for amt %d", i+1, _amount[i]);
+            Serial.println(sb);
+            // #endif
             Buzzer::buzz(75);
             turn_off(i);
 
@@ -112,11 +134,12 @@ void Relay::update() {
             // check only immediately after stopping an active pump....
             // if this was the last active pump, restart timer and state change
             if(_active == 0) {
+                Buzzer::buzz(500);
                 turn_off_all(); // just to be safe
                 RHTimer::start();
-                #ifdef DEBUG
-                    Serial.println("restarting timer...");
-                #endif
+                // #ifdef DEBUG
+                Serial.println("restarting timer...");
+                // #endif
                 Machine::changeState(static_cast<UI_State *>(new UI_Inactive()));
             }
         }
