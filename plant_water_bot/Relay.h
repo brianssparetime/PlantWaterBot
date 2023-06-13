@@ -21,6 +21,7 @@ class Relay {
         static unsigned long get_max_duration();
 
         static uint8_t _amount[NUM_PUMPS];
+        static bool _relay_state[NUM_PUMPS];
         static unsigned long _start_time;
         static uint8_t _active;
         static bool _testing;

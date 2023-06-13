@@ -14,6 +14,7 @@
 
 // when uncommented, serial debug output is enabled; 
 //    but this causes some instability (possible memory issues)!
+//    technically, I should rewrite printlns to use sprintf stringbufs instead of String()
 //#define DEBUG
 
 
@@ -39,10 +40,10 @@ REWrapper rew = REWrapper( &encoder);
   void setup() {
 
     
-    // #ifdef DEBUG 
+    #ifdef DEBUG 
       Serial.begin(115200);
       Serial.println("PlantBot online");
-    // #endif
+    #endif
 
     Buzzer::init(BUZZER_PIN);
 

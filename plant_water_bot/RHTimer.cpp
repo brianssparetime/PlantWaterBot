@@ -7,7 +7,7 @@
 #include "UI_States.h"
 
 // when uncommented, this causes watering activation each minute for rapid testing
-#define WARP_SPEED
+//#define WARP_SPEED
 
 uint8_t RHTimer::_minutes_elapsed = 0;
 uint8_t RHTimer::_hours_elapsed = 0;
@@ -70,11 +70,6 @@ void RHTimer::update() {
         // NOTE:  when millis() overflows and loops back to zero, we'll just wind up
         // adding an extra minute because this will fire immediately.
 
-        // if(_cur_interval == 0) { // when in UI_Test
-        //     alarm();
-        //     start(Globals::intervals[0]); // TODO:  testing mode effectivly erases your set interval
-        //     return;
-        // }
 
         // this is for rapid testing (not UI_Test) so you don't have to wait to see whether watering works
         #ifdef WARP_SPEED

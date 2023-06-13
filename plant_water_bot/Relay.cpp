@@ -12,18 +12,19 @@
 uint8_t Relay::_active = 0;
 bool Relay::_testing = false; // used by UI_States.cpp to prevent update from turning off...
 uint8_t Relay::_amount[NUM_PUMPS] = {10,10};
+bool Relay::_relay_state[NUM_PUMPS] = {false,false};
 unsigned long Relay::_start_time = 0UL; 
 
 void Relay::init() {
     _active = 0;
     for(uint8_t i=0; i < NUM_PUMPS; i++) {
-        //_amount[i] = Globals::amounts[0];
         _amount[i] = Globals::amounts[0];
+        _relay_state[i] = false;
         pinMode(Globals::RELAY_PINS[i], OUTPUT); // low active
         digitalWrite(Globals::RELAY_PINS[i], HIGH);
     }
     // TESTING TODO REMOVE
-    _amount[1] = 100;
+    //_amount[1] = 100;
 }
 
 void Relay::testing(bool t_mode) {
@@ -32,7 +33,7 @@ void Relay::testing(bool t_mode) {
 
 unsigned long Relay::amount_to_duration(uint8_t amount) {
     // (ml / (ml/s) ) * ms/s
-    return (unsigned long) (((unsigned long) amount) / Globals::flowrate * 1000UL);
+    return (unsigned long) (((unsigned long) amount) * 1000UL / Globals::flowrate);
 }
 
 void Relay::set_amount(uint8_t amt, uint8_t relay) {
@@ -65,31 +66,37 @@ void Relay::turn_on() {
     _active = 0;
     for(uint8_t i = 0; i < NUM_PUMPS; i++) {
         if (_amount[i] > 0) {
-            char sb[30];
-            sprintf(sb, "relay %d on for amt %d", i+1, _amount[i]);
-            Serial.println(sb);
+            #ifdef DEBUG
+                char sb[30];
+                sprintf(sb, "relay %d on for amt %d", i+1, _amount[i]);
+                Serial.println(sb);
+            #endif 
             digitalWrite(Globals::RELAY_PINS[i], LOW);
             _active++;
+            _relay_state[i] = true;
         }
     }
 }
 
 void Relay::turn_off_all() {
-    Serial.println("turning off all relays");
+    #ifdef DEBUG
+        Serial.println("turning off all relays");
+    #endif
+
     for(uint8_t i = 0; i < NUM_PUMPS; i++) {
         turn_off(i);
     }
     _active = 0;
-    //_testing = false; -- do we need this?  I don' think so
 }
 
 void Relay::turn_off(uint8_t relay) {
-    // #ifdef DEBUG
+    #ifdef DEBUG
         char sb[20];
         sprintf(sb, "relay %d turning off", relay+1);
         Serial.println(sb);
-    // #endif
+    #endif
     digitalWrite(Globals::RELAY_PINS[relay], HIGH);
+    _relay_state[relay] = false;
     if (_amount[relay] > 0 && _active > 0) {
         _active--;  
     }
@@ -106,27 +113,21 @@ void Relay::update() {
         return;
     }
 
-    // #ifdef DEBUG
-    //     char sb[20];
-    //     sprintf(sb, "_active = %d", _active);
-    //     Serial.println(sb);
-    // #endif 
-
     unsigned long now = millis();
     for(uint8_t i=0; i < NUM_PUMPS; i++) {
 
-        // no need to turn off disabled pumps
-        if (_amount[i] == 0) {
+        // no need to turn off disabled or already-off pumps
+        if (_amount[i] == 0 || _relay_state[i] == false) {
             continue;
         }
 
         // if the pump is active and we've exceeded the amount by duration...
         if(now > _start_time + amount_to_duration(_amount[i])) {
-            // #ifdef DEBUG
-            char sb[30];
-            sprintf(sb, "relay %d exceeded time for amt %d", i+1, _amount[i]);
-            Serial.println(sb);
-            // #endif
+            #ifdef DEBUG
+                char sb[30];
+                sprintf(sb, "relay %d exceeded time for amt %d", i+1, _amount[i]);
+                Serial.println(sb);
+            #endif
             Buzzer::buzz(75);
             turn_off(i);
 
@@ -137,9 +138,9 @@ void Relay::update() {
                 Buzzer::buzz(500);
                 turn_off_all(); // just to be safe
                 RHTimer::start();
-                // #ifdef DEBUG
-                Serial.println("restarting timer...");
-                // #endif
+                #ifdef DEBUG
+                    Serial.println("restarting timer...");
+                #endif
                 Machine::changeState(static_cast<UI_State *>(new UI_Inactive()));
             }
         }
